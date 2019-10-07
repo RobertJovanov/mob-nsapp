@@ -1,10 +1,9 @@
 package com.mobiquity.mobtravelapp.controller;
 
+import com.mobiquity.mobtravelapp.model.RouteModel;
 import com.mobiquity.mobtravelapp.service.TravelService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/travelInfo")
@@ -14,8 +13,8 @@ public class TravelController {
     TravelService travelService;
 
     @GetMapping("/routes")
-    public void getRoutes(){
-        travelService.getRoutes();
+    public void getRoutes(@RequestBody RouteModel routeModel){
+        travelService.getRoutes(routeModel);
     }
 
 }
