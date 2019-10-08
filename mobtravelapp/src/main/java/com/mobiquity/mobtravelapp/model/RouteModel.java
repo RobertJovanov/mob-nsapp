@@ -1,8 +1,5 @@
 package com.mobiquity.mobtravelapp.model;
 
-import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 public class RouteModel {
     private String fromStation;
     private String toStation;
