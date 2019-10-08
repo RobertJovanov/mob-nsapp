@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 public class RouteModel {
     private String fromStation;
     private String toStation;
-    private LocalDateTime dateTime;
+    private String dateTime;
 
-    public RouteModel(String fromStation, String toStation, LocalDateTime dateTime) {
+    public RouteModel(String fromStation, String toStation, String dateTime) {
         this.fromStation = fromStation;
         this.toStation = toStation;
         this.dateTime = dateTime;
@@ -30,11 +30,11 @@ public class RouteModel {
         this.toStation = toStation;
     }
 
-    public LocalDateTime getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
+    public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
 }
