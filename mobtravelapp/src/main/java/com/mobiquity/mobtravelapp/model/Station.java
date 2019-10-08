@@ -1,14 +1,14 @@
 package com.mobiquity.mobtravelapp.model;
 
 public class Station {
-    String name;
-    String plannedDepartureTime;
-    String actualDepartureTime;
-    String plannedArrivalTime;
-    String actualArrivalTime;
-    String plannedTrack;
-    String actualTrack;
-    boolean passing;
+    private String name;
+    private String plannedDepartureTime;
+    private String actualDepartureTime;
+    private String plannedArrivalTime;
+    private String actualArrivalTime;
+    private String plannedTrack;
+    private String actualTrack;
+    private boolean passing;
 
     private Station(String name, String plannedArrivalTime, String actualArrivalTime, String plannedDepartureTime,
                     String actualDepartureTime, String plannedTrack, String actualTrack, boolean passing){

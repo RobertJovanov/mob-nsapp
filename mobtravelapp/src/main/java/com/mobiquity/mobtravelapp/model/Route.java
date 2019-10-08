@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Route {
-    int index;
-    Station origin;
-    Station destination;
-    Station direction;
-    List<Station> stops;
-    int transfers;
+    private int index;
+    private Station origin;
+    private Station destination;
+    private Station direction;
+    private List<Station> stops;
+    private int transfers;
 
     private Route(int index, Station origin, Station destination, Station direction, List<Station> stops, int transfers){
         this.index = index;
