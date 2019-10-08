@@ -15,13 +15,9 @@ public class TravelController {
     @Autowired
     TravelService travelService;
 
-
     @GetMapping("/routes/{fromStation}/{toStation}/{dateTime}")
     public void getRoutes(@PathVariable("fromStation") String fromStation, @PathVariable("toStation") String toStation,@PathVariable("dateTime") String dateTime ){
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        LocalDateTime localDateTime = LocalDateTime.parse(dateTime, formatter);
         travelService.getRoutes( new RouteModel(fromStation,toStation,dateTime));
-
     }
 
 }
