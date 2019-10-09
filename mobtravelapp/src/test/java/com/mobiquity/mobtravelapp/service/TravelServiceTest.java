@@ -40,16 +40,27 @@ public class TravelServiceTest {
 
     @Test
     @DisplayName("Json file should contain six routes when parsed")
-    public void checkThatJsonIsParsed() throws IOException {
+    public void checkThatJsonIsParsed(){
         JsonArray jsonArray = new JsonArray();
-        assertEquals(0, jsonArray.size());
-        Stream<String> jsonContent = Files.lines(Paths.get("src/test/resources/jsonTest.json"));
-        String result = jsonContent.collect(Collectors.joining());
-        jsonArray = travelService.parseJson(result);
+        jsonArray = getJsonArrayFromTestResource();
         assertEquals(6, jsonArray.size());
     }
 
-    //@Test
-    //public void checkIfStationIsSerialized
+    @Test
+    public void checkIfStationIsSerialized(){
+        JsonArray jsonArray = getJsonArrayFromTestResource();
+
+    }
+
+    private JsonArray getJsonArrayFromTestResource() {
+        Stream<String> jsonContent = null;
+        try {
+            jsonContent = Files.lines(Paths.get("src/test/resources/jsonTest.json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String jsonString = jsonContent.collect(Collectors.joining());
+        return travelService.parseJson(jsonString);
+    }
 
 }
