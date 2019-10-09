@@ -12,10 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.nio.file.Path;
 import java.text.MessageFormat;
-import java.util.stream.IntStream;
 
+;
 
 @Service
 public class TravelService {
@@ -38,11 +37,6 @@ public class TravelService {
         System.out.println(result.getBody());
         parseJson(result.getBody());
     }
-
-    /**
-     *
-     * @param result
-     */
     /*
     private void parseJson(String result) {
         JsonObject jsonObject = new JsonParser().parse(result).getAsJsonObject();
@@ -59,6 +53,6 @@ public class TravelService {
         JsonObject jsonObject = new JsonParser().parse(result).getAsJsonObject();
         JsonArray trips = jsonObject.getAsJsonArray("trips");
         return trips;
-    };
+    }
 
 }

@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.mobiquity.mobtravelapp.model.RouteModel;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,8 +14,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
@@ -38,17 +39,14 @@ public class TravelServiceTest {
     }
 
     @Test
+    @DisplayName("Json file should contain six routes when parsed")
     public void checkThatJsonIsParsed() throws IOException {
         JsonArray jsonArray = new JsonArray();
         assertEquals(0, jsonArray.size());
         Stream<String> jsonContent = Files.lines(Paths.get("src/test/resources/jsonTest.json"));
-        String result = "";
-        jsonContent.forEach(i -> {
-
-            result += i;
-        });
-        jsonArray = travelService.parseJson(jsonContent);
-        assertEquals(7, jsonArray.size());
+        String result = jsonContent.collect(Collectors.joining());
+        jsonArray = travelService.parseJson(result);
+        assertEquals(6, jsonArray.size());
     }
 
 }
