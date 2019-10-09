@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.model.RouteModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,15 +21,19 @@ import java.text.MessageFormat;
 @Service
 public class TravelService {
 
+   private final Logger logger = LoggerFactory.getLogger(TravelService.class);
+
     @Value("${ns.nl.api.url}")
     private String uri;
 
     final String key = "7504c483d91f486a82b917743521ab40";
 
+
     public void getRoutes(RouteModel routeModel)  {
         String url = MessageFormat.format(uri,"fromStation=" + routeModel.getFromStation(), "toStation=" + routeModel.getToStation(), "dateTime=" + routeModel.getDateTime());
         RestTemplate restTemplate = new RestTemplate();
-        System.out.println(url);
+       // System.out.println(url);
+        logger.info(url);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Ocp-Apim-Subscription-Key", key);
