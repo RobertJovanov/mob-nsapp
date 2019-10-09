@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Route {
+    //TODO decide if we need the index
     private int index;
     private Station origin;
     private Station destination;

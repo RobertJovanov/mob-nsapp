@@ -8,6 +8,7 @@ public class Station {
     private String actualArrivalTime;
     private String plannedTrack;
     private String actualTrack;
+    //TODO implement passing
 
     private Station(String name, String plannedArrivalTime, String actualArrivalTime, String plannedDepartureTime,
                     String actualDepartureTime, String plannedTrack, String actualTrack){
@@ -37,6 +38,10 @@ public class Station {
                                             String plannedTrack, String actualTrack){
         return new Station(name, plannedArrivalTime, actualArrivalTime, plannedDepartureTime, actualDepartureTime,
                 plannedTrack, actualTrack);
+    }
+
+    public static Station createDirectionStation(String name){
+        return new Station(name, "", "", "", "", "", "");
     }
 
 }

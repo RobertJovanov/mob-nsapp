@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.model.RouteModel;
 import com.mobiquity.mobtravelapp.model.Station;
+import com.mobiquity.mobtravelapp.model.Trip;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,13 +70,17 @@ public class TravelService {
     //TODO Map Station
     // Extract data needed for factory methods
 
+    /*
     public Station extractOriginStation(JsonArray trips) {
         IntStream.range(0, trips.size()).mapToObj(i -> trips.get(i).getAsJsonObject()).forEach(trip -> {
             System.out.println(trip.get("plannedDurationInMinutes"));
             JsonArray legs = trip.getAsJsonArray("legs");
+
+            JsonObject leg;
+
             int bound = legs.size();
             for (int j = 0; j < bound; j++) {
-                JsonObject leg = legs.get(j).getAsJsonObject();
+                leg = legs.get(j).getAsJsonObject();
                 String direction = leg.get("direction").getAsString();
                 JsonArray stops = leg.get("stops").getAsJsonArray();
                 JsonObject stop = stops.get(0).getAsJsonObject();
@@ -90,21 +95,22 @@ public class TravelService {
                 String plannedTrack=stop.get("plannedTrack").getAsString();
                 String actualTrack;
                 if(stop.get("actualTrack")!=null){
-                    actualTrack=stop.get("actualTrack").getAsString();
+                    actualTrack = stop.get("actualTrack").getAsString();
                 }
                 else{
-                    actualTrack=stop.get("plannedTrack").getAsString();
+                    actualTrack = stop.get("plannedTrack").getAsString();
                 }
-                Station originStation = createOriginStation(originName, plannedDepartureTime, actualDepartureDateTime, plannedTrack, actualTrack);
-                return originStation;
             }
-
         });
-
-
+        return createOriginStation(originName, plannedDepartureTime, actualDepartureDateTime, plannedTrack, actualTrack);
     }
+    */
 
     //TODO Map Trip
+    //TODO implement
+    public Trip extractTrip() {
+        return null;
+    }
 
     //TODO Map Route
 
