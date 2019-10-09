@@ -49,4 +49,7 @@ public class TravelServiceTest {
         assertEquals(6, jsonArray.size());
     }
 
+    //@Test
+    //public void checkIfStationIsSerialized
+
 }

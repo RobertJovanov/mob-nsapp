@@ -61,4 +61,10 @@ public class TravelService {
         return trips;
     }
 
+    //TODO Map Trip
+
+    //TODO Map Route
+
+    //TODO Map Station
+
 }
