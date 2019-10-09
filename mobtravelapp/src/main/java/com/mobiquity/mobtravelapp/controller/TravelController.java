@@ -5,6 +5,7 @@ import com.mobiquity.mobtravelapp.service.TravelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -15,7 +16,7 @@ public class TravelController {
     TravelService travelService;
 
     @GetMapping("/routes")
-    public void getRoutes(@RequestParam(value ="fromStation") String fromStation, @RequestParam(value = "toStation") String toStation, @RequestParam(value = "dateTime") String dateTime) {
+    public void getRoutes(@RequestParam(value ="fromStation") String fromStation, @RequestParam(value = "toStation") String toStation, @RequestParam(value = "dateTime") String dateTime) throws IOException {
         travelService.getRoutes(new RouteModel(fromStation, toStation, dateTime));
     }
 
