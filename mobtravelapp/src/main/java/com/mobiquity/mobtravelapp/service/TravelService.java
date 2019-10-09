@@ -14,8 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.file.Path;
 import java.text.MessageFormat;
-
+import java.util.stream.IntStream;
 
 
 @Service
@@ -45,21 +46,11 @@ public class TravelService {
         JsonObject jsonObject = new JsonParser().parse(result).getAsJsonObject();
         JsonArray trips = jsonObject.getAsJsonArray("trips");
         System.out.println(trips.size());
-        for (int i = 0; i < trips.size(); i++) {
-            JsonObject trip = trips.get(i).getAsJsonObject();
+        IntStream.range(0, trips.size()).mapToObj(i -> trips.get(i).getAsJsonObject()).forEach(trip -> {
             System.out.println(trip.get("plannedDurationInMinutes"));
-            JsonArray legs=trip.getAsJsonArray("legs");
-            for(int j=0;j<legs.size();j++){
-                JsonObject leg = legs.get(j).getAsJsonObject();
-                System.out.println(leg.get("direction"));
-            }
-
-
-
-
-        }
-
-
+            JsonArray legs = trip.getAsJsonArray("legs");
+            IntStream.range(0, legs.size()).mapToObj(j -> legs.get(j).getAsJsonObject()).map(leg -> leg.get("direction")).forEach(System.out::println);
+        });
     }
 
 
