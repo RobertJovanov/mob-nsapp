@@ -1,7 +1,5 @@
 package com.mobiquity.mobtravelapp.service;
 
-//import com.fasterxml.jackson.annotation.JsonValue;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -15,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.MessageFormat;
-
+import java.util.stream.IntStream;
 
 
 @Service
@@ -37,30 +35,30 @@ public class TravelService {
         HttpEntity<String> entity = new HttpEntity<String>(httpHeaders);
         ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         System.out.println(result.getBody());
-        parseThroughJson(result.getBody());
+        parseJson(result.getBody());
     }
 
-    private void parseThroughJson(String result) {
-//        final JSONObject obj = new JSONObject();
+    /**
+     *
+     * @param result
+     */
+    /*
+    private void parseJson(String result) {
         JsonObject jsonObject = new JsonParser().parse(result).getAsJsonObject();
         JsonArray trips = jsonObject.getAsJsonArray("trips");
         System.out.println(trips.size());
-        for (int i = 0; i < trips.size(); i++) {
-            JsonObject trip = trips.get(i).getAsJsonObject();
+        IntStream.range(0, trips.size()).mapToObj(i -> trips.get(i).getAsJsonObject()).forEach(trip -> {
+            System.out.println(trip.get("transfers"));
             System.out.println(trip.get("plannedDurationInMinutes"));
-            JsonArray legs=trip.getAsJsonArray("legs");
-            for(int j=0;j<legs.size();j++){
-                JsonObject leg = legs.get(j).getAsJsonObject();
-                System.out.println(leg.get("direction"));
-            }
+            JsonArray legs = trip.getAsJsonArray("legs");
+            IntStream.range(0, legs.size()).mapToObj(j -> legs.get(j).getAsJsonObject()).map(leg -> leg.get("direction")).forEach(System.out::println);
+        });
+        */
 
-
-
-
-        }
-
-
-    }
-
+    public JsonArray parseJson(String result) {
+        JsonObject jsonObject = new JsonParser().parse(result).getAsJsonObject();
+        JsonArray trips = jsonObject.getAsJsonArray("trips");
+        return trips;
+    };
 
 }
