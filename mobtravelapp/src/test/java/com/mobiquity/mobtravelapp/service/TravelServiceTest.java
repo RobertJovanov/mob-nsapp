@@ -3,6 +3,7 @@ package com.mobiquity.mobtravelapp.service;
 
 import com.google.gson.JsonArray;
 import com.mobiquity.mobtravelapp.model.RouteModel;
+import com.mobiquity.mobtravelapp.model.Station;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -49,7 +51,9 @@ public class TravelServiceTest {
     @Test
     public void checkIfStationIsSerialized(){
         JsonArray jsonArray = getJsonArrayFromTestResource();
-
+        Station expectedStation = Station.createOriginStation("Amsterdam Zuid", "2019-10-09T09:15:00+0200",
+                "2019-10-09T09:15:00+0200", "2", "2");
+        assertThat(expectedStation, travelService.extractOriginStation(jsonArray));
     }
 
     private JsonArray getJsonArrayFromTestResource() {

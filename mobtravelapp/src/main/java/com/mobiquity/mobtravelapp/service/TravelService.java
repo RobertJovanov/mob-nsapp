@@ -61,10 +61,15 @@ public class TravelService {
         return trips;
     }
 
+    //TODO Map Station
+    // Extract data needed for factory methods
+
+    public Object extractOriginStation(JsonArray jsonArray) {
+        return null;
+    }
+
     //TODO Map Trip
 
     //TODO Map Route
-
-    //TODO Map Station
 
 }
