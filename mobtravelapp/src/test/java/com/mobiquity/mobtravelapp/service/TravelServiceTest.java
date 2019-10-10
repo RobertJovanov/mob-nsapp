@@ -163,11 +163,10 @@ public class TravelServiceTest {
              * Extract the direction, number of transfers and status of a trip
              */
             Station directionStation = Station.createDirectionStation(leg.get("direction").getAsString());
-            int index = leg.get("idx").getAsInt();
             int transfers = trip.get("transfers").getAsInt();
             String status = trip.get("status").getAsString();
 
-            Route route = Route.createRoute(index, originStation, destinationStation,
+            Route route = Route.createRoute(originStation, destinationStation,
                     directionStation, stopStations, transfers, status);
 
             expectedRoutes.add(route);

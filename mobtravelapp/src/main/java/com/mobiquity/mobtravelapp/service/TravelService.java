@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.model.RouteModel;
-import com.mobiquity.mobtravelapp.model.Station;
 import com.mobiquity.mobtravelapp.model.Trip;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.MessageFormat;
-import java.util.stream.IntStream;
 
-;import static com.mobiquity.mobtravelapp.model.Station.createOriginStation;
+;
 
 @Service
 public class TravelService {
