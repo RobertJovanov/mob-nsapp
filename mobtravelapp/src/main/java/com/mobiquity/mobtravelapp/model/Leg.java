@@ -3,9 +3,9 @@ package com.mobiquity.mobtravelapp.model;
 import java.util.List;
 
 public class Leg {
+    private String direction;
     private Station origin;
     private Station destination;
-    private String direction;
     private List<Station> stops;
 
     public Leg() {
@@ -32,5 +32,21 @@ public class Leg {
 
     public void setStops(List<Station> stops) {
         this.stops = stops;
+    }
+
+    public Station getOrigin() {
+        return origin;
+    }
+
+    public Station getDestination() {
+        return destination;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public List<Station> getStops() {
+        return stops;
     }
 }

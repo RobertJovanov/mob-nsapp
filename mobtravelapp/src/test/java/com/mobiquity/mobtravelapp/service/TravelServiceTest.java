@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.model.Route;
 import com.mobiquity.mobtravelapp.model.RouteModel;
+import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.validation.constraints.AssertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -53,22 +53,26 @@ public class TravelServiceTest {
     }
 
     @Test
-    public void checkIfStationIsSerialized(){
+    public void checkStationExtractionSuccessful(){
         JsonArray jsonArray = getJsonArrayFromTestResource();
-//        Station expectedStation = Station.createOriginStation("Amsterdam Zuid", "2019-10-09T09:15:00+0200",
-//                "2019-10-09T09:15:00+0200", "2", "2");
-//        assertThat(expectedStation, travelService.extractOriginStation(jsonArray));
+        List<Route> expectedRoutes= travelService.extractingAllTheRoutes(jsonArray);
+        assertEquals(6,expectedRoutes.size());
     }
 
     @Test
     public void checkRoutesExtractionSuccessful(){
         JsonArray jsonArray = getJsonArrayFromTestResource();
-        JsonObject jsonObject = new JsonParser().parse(String.valueOf(jsonArray)).getAsJsonObject();
-        JsonArray trips = jsonObject.getAsJsonArray("trips");
-        List<Route> expectedRoutes= travelService.extractingAllTheRoutes(trips);
+        List<Route> expectedRoutes= travelService.extractingAllTheRoutes(jsonArray);
         assertEquals(6,expectedRoutes.size());
-
     }
+
+    @Test
+    public void checkStopExtractionSuccessful(){
+        JsonObject jsonObject = new JsonParser().parse(getJsonArrayFromStopTestResource()).getAsJsonObject();
+        JsonArray stops = jsonObject.getAsJsonArray("stops");
+        assertEquals(3,travelService.extractAllStations(stops).size());
+    }
+
 
     private JsonArray getJsonArrayFromTestResource() {
         Stream<String> jsonContent = null;
@@ -81,4 +85,14 @@ public class TravelServiceTest {
         return travelService.extractingAllTheTrips(jsonString);
     }
 
+    private String getJsonArrayFromStopTestResource() {
+        Stream<String> jsonContent = null;
+        try {
+            jsonContent = Files.lines(Paths.get("src/test/resources/stopsTest.json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String jsonString = jsonContent.collect(Collectors.joining());
+        return jsonString;
+    }
 }
