@@ -2,8 +2,10 @@ package com.mobiquity.mobtravelapp.service;
 
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.mobiquity.mobtravelapp.model.Route;
 import com.mobiquity.mobtravelapp.model.RouteModel;
-import com.mobiquity.mobtravelapp.model.Station;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -13,9 +15,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import javax.validation.constraints.AssertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,6 +60,16 @@ public class TravelServiceTest {
 //        assertThat(expectedStation, travelService.extractOriginStation(jsonArray));
     }
 
+    @Test
+    public void checkRoutesExtractionSuccessful(){
+        JsonArray jsonArray = getJsonArrayFromTestResource();
+        JsonObject jsonObject = new JsonParser().parse(String.valueOf(jsonArray)).getAsJsonObject();
+        JsonArray trips = jsonObject.getAsJsonArray("trips");
+        List<Route> expectedRoutes= travelService.extractingAllTheRoutes(trips);
+        assertEquals(6,expectedRoutes.size());
+
+    }
+
     private JsonArray getJsonArrayFromTestResource() {
         Stream<String> jsonContent = null;
         try {
@@ -64,7 +78,7 @@ public class TravelServiceTest {
             e.printStackTrace();
         }
         String jsonString = jsonContent.collect(Collectors.joining());
-        return travelService.parseJson(jsonString);
+        return travelService.extractingAllTheTrips(jsonString);
     }
 
 }

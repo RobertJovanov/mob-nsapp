@@ -3,10 +3,7 @@ package com.mobiquity.mobtravelapp.service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mobiquity.mobtravelapp.model.Route;
-import com.mobiquity.mobtravelapp.model.RouteModel;
-import com.mobiquity.mobtravelapp.model.Station;
-import com.mobiquity.mobtravelapp.model.Trip;
+import com.mobiquity.mobtravelapp.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,25 +47,26 @@ public class TravelService {
         HttpEntity<String> entity = new HttpEntity<String>(httpHeaders);
         ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         System.out.println(result.getBody());
-        JsonArray trips = parseJson(result.getBody());
-        return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), parsingStations(trips));
+        JsonArray trips = extractingAllTheTrips(result.getBody());
+        return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), extractingAllTheRoutes(trips));
 
     }
 
 
-    public JsonArray parseJson(String result) {
+    public JsonArray extractingAllTheTrips(String result) {
         JsonObject jsonObject = new JsonParser().parse(result).getAsJsonObject();
         JsonArray trips = jsonObject.getAsJsonArray("trips");
         return trips;
     }
 
 
-    public List<Route> parsingStations(JsonArray trips) {
+    public List<Route> extractingAllTheRoutes(JsonArray trips) {
 
         List<Route> routes = new ArrayList<>();
 
         AtomicInteger index = new AtomicInteger(0);
         IntStream.range(0, trips.size()).mapToObj(i -> trips.get(i).getAsJsonObject()).forEach(trip -> {
+
             Route route = new Route();
             route.setIndex(index.getAndIncrement());
             route.setPlannedDurationInMinutes(trip.get("plannedDurationInMinutes").getAsInt());
@@ -78,46 +76,64 @@ public class TravelService {
                 System.out.println("This Route is cancelled. Do nothing");
             } else {
                 JsonArray legs = trip.getAsJsonArray("legs");
-                if (legs.size() > 1) {
-                    List<Route> transferRoutes = new ArrayList<>();
+                for(int j=0;j<legs.size();j++){
+                    Leg leg=new Leg();
+                    JsonObject legFromNs = legs.get(j).getAsJsonObject();
 
-                    for (int j = 0; j < legs.size(); j++) {
-                        Route transferRoute = new Route();
-                        transferRoute.setIndex(j + 1);
-                        JsonObject leg = legs.get(j).getAsJsonObject();
-                        transferRoute.setDirection(leg.get("direction").getAsString());
 
-                        JsonArray stops = leg.get("stops").getAsJsonArray();
-                        List<Station> stations = extractAllStations(stops);
-                        transferRoute.setOrigin(stations.get(0));
-                        transferRoute.setDestination(stations.get(stations.size() - 1));
-                        List<Station> intermediateStation = new ArrayList<>();
-                        for (int i = 1; i < stations.size() - 1; i++) {
-                            intermediateStation.add(stations.get(i));
-                        }
-                        transferRoute.setStops(intermediateStation);
-                        transferRoutes.add(transferRoute);
-                    }
 
-                    route.setTransferRoutes(transferRoutes);
 
-                } else {
-                    JsonObject leg = legs.get(0).getAsJsonObject();
-                    route.setDirection(leg.get("direction").getAsString());
-
-                    JsonArray stops = leg.get("stops").getAsJsonArray();
-                    List<Station> stations = extractAllStations(stops);
-                    route.setOrigin(stations.get(0));
-                    route.setDestination(stations.get(stations.size() - 1));
-                    List<Station> intermediateStation = new ArrayList<>();
-                    for (int i = 1; i < stations.size() - 1; i++) {
-                        intermediateStation.add(stations.get(i));
-                    }
-                    route.setStops(intermediateStation);
                 }
 
-                routes.add(route);
-            }
+                }
+
+
+//
+//                    JsonArray stops = leg.get("stops").getAsJsonArray();
+//                    List<Station> stations = extractAllStations(stops);
+
+//
+//                if (legs.size() > 1) {
+//                    List<Route> transferRoutes = new ArrayList<>();
+//
+//                    for (int j = 0; j < legs.size(); j++) {
+//                        Route transferRoute = new Route();
+//                        transferRoute.setIndex(j + 1);
+//                        JsonObject leg = legs.get(j).getAsJsonObject();
+//                        transferRoute.setDirection(leg.get("direction").getAsString());
+//                        JsonArray stops = leg.get("stops").getAsJsonArray();
+//                        List<Station> stations = extractAllStations(stops);
+//                        transferRoute.setOrigin(stations.get(0));
+//                        transferRoute.setDestination(stations.get(stations.size() - 1));
+//                        List<Station> intermediateStation = new ArrayList<>();
+//
+//                        for (int i = 1; i < stations.size() - 1; i++) {
+//                            intermediateStation.add(stations.get(i));
+//                        }
+//
+//                        transferRoute.setLegs(intermediateStation);
+//                        transferRoutes.add(transferRoute);
+//                    }
+//                    route.setTransferRoutes(transferRoutes);
+//
+//                } else {
+//                    JsonObject leg = legs.get(0).getAsJsonObject();
+//                    route.setDirection(leg.get("direction").getAsString());
+//
+//                    JsonArray stops = leg.get("stops").getAsJsonArray();
+//                    List<Station> stations = extractAllStations(stops);
+//                    route.setOrigin(stations.get(0));
+//                    route.setDestination(stations.get(stations.size() - 1));
+//                    List<Station> intermediateStation = new ArrayList<>();
+//
+//                    for (int i = 1; i < stations.size() - 1; i++) {
+//                        intermediateStation.add(stations.get(i));
+//                    }
+//                    route.setLegs(intermediateStation);
+//                }
+
+//                routes.add(route);
+//            }
 
         });
         return routes;

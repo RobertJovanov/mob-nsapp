@@ -24,24 +24,7 @@ public class Station {
     }
 
 
-    public String originStationtoString() {
-        return "Station{" +
-                "name='" + name + '\'' +
-                ", plannedDepartureTime='" + plannedDepartureTime + '\'' +
-                ", actualDepartureTime='" + actualDepartureTime + '\'' +
-                ", plannedTrack='" + plannedTrack + '\'' +
-                ", actualTrack='" + actualTrack + '\'' +
-                '}';
-    }
-    public String destinationStationtoString() {
-        return "Station{" +
-                "name='" + name + '\'' +
-                ", plannedArrivalTime='" + plannedArrivalTime + '\'' +
-                ", actualArrivalTime='" + actualArrivalTime + '\'' +
-                ", plannedTrack='" + plannedTrack + '\'' +
-                ", actualTrack='" + actualTrack + '\'' +
-                '}';
-    }
+
     //    public static Station createOriginStation(String name, String plannedDateTime, String actualDateTime,
 //                                              String plannedTrack, String actualTrack){
 //        return new Station(name, "", "", plannedDateTime, actualDateTime,
