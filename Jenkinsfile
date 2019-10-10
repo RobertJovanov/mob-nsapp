@@ -29,6 +29,11 @@ node{
         notify("Approval is needed for deployment")
         input 'Is this ready for deployment to production?'
     }
+
+    stage("Deploy to EKS") {
+        sh '/usr/local/bin/helm lint --strict ./helm/hello-world/'
+        sh '/usr/local/bin/helm install hello-world ./helm/hello-world/'
+    }
 }
 
 def notify(status) {
