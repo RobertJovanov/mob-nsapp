@@ -26,6 +26,4 @@ public class Route {
         return new Route(origin, destination, direction, stops, transfers, status);
     }
 
-
-
 }

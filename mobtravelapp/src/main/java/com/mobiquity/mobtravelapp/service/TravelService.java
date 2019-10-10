@@ -23,13 +23,11 @@ import java.text.MessageFormat;
 public class TravelService {
 
     private final Logger logger = LoggerFactory.getLogger(TravelService.class);
-    
 
     @Value("${ns.nl.api.url}")
     private String uri;
 
     final String key = "7504c483d91f486a82b917743521ab40";
-
 
     public void getRoutes(RouteModel routeModel) {
         String url = MessageFormat.format(uri, "fromStation=" + routeModel.getFromStation(), "toStation=" + routeModel.getToStation(), "dateTime=" + routeModel.getDateTime());

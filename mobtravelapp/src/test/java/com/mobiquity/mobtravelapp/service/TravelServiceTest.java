@@ -1,6 +1,5 @@
 package com.mobiquity.mobtravelapp.service;
 
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mobiquity.mobtravelapp.model.Route;
@@ -27,7 +26,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -64,10 +62,12 @@ public class TravelServiceTest {
         //assertThat(expectedStation, travelService.extractOriginStation(jsonArray));
     }
 
+    //TODO implement passing logic
     @Test
     public void checkIfTripIsSerialized(){
         JsonArray jsonArray = getJsonArrayFromTestResource();
 
+        //TODO use
         String tripOrigin;
         String tripDestination;
         String tripDateTime;
