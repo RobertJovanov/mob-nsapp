@@ -2,6 +2,9 @@ package com.mobiquity.mobtravelapp.model;
 
 import java.util.List;
 
+/**
+ * A route represent a way to complete a trip
+ */
 public class Route {
     private int index;
     private Station origin;

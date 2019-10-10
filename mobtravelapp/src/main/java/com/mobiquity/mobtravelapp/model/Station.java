@@ -46,7 +46,6 @@ public class Station {
      * @param actualTrack
      * @return
      */
-
     public static Station createDestinationStation(String name, String plannedDateTime, String actualDateTime,
                                                    String plannedTrack, String actualTrack){
         return new Station(name, plannedDateTime, actualDateTime, "", "",

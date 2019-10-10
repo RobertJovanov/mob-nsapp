@@ -2,6 +2,9 @@ package com.mobiquity.mobtravelapp.model;
 
 import java.util.List;
 
+/**
+ * A Leg represents a leg of a route
+ */
 public class Leg {
     private Station origin;
     private Station destination;
