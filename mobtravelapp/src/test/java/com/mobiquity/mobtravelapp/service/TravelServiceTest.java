@@ -166,10 +166,15 @@ public class TravelServiceTest {
             int transfers = trip.get("transfers").getAsInt();
             String status = trip.get("status").getAsString();
 
+            /*
             Route route = Route.createRoute(originStation, destinationStation,
                     directionStation, stopStations, transfers, status);
 
+
+
             expectedRoutes.add(route);
+
+             */
         });
 
         //TODO create trip and assertIt
