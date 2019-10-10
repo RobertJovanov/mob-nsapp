@@ -31,8 +31,10 @@ node{
     }
 
     stage("Deploy to EKS") {
-        sh '/usr/local/bin/helm lint --strict ./helm/hello-world/'
-        sh '/usr/local/bin/helm install hello-world ./helm/hello-world/'
+        withEnv(['PATH+EXTRA=/usr/local/bin']) {
+            sh 'helm lint --strict ./helm/hello-world/'
+            sh 'helm install hello-world ./helm/hello-world/'
+        }
     }
 }
 
