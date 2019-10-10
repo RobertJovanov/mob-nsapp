@@ -3,8 +3,10 @@ package com.mobiquity.mobtravelapp.service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mobiquity.mobtravelapp.model.Route;
 import com.mobiquity.mobtravelapp.model.RouteModel;
 import com.mobiquity.mobtravelapp.model.Station;
+import com.mobiquity.mobtravelapp.model.Trip;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,23 +18,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
-;import static com.mobiquity.mobtravelapp.model.Station.createOriginStation;
 
 @Service
 public class TravelService {
 
     private final Logger logger = LoggerFactory.getLogger(TravelService.class);
-    
+    // Route route = new Route();
+
 
     @Value("${ns.nl.api.url}")
     private String uri;
 
+
     final String key = "7504c483d91f486a82b917743521ab40";
 
 
-    public void getRoutes(RouteModel routeModel) {
+    public Trip getRoutes(RouteModel routeModel) {
         String url = MessageFormat.format(uri, "fromStation=" + routeModel.getFromStation(), "toStation=" + routeModel.getToStation(), "dateTime=" + routeModel.getDateTime());
         RestTemplate restTemplate = new RestTemplate();
         // System.out.println(url);
@@ -45,20 +51,10 @@ public class TravelService {
         ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         System.out.println(result.getBody());
         JsonArray trips = parseJson(result.getBody());
-       // extractOriginStation(trips);
+        return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), parsingStations(trips));
 
     }
-    /*
-    private void parseJson(String result) {
-        JsonObject jsonObject = new JsonParser().parse(result).getAsJsonObject();
-        JsonArray trips = jsonObject.getAsJsonArray("trips");
-        System.out.println(trips.size());
-        IntStream.range(0, trips.size()).mapToObj(i -> trips.get(i).getAsJsonObject()).forEach(trip -> {
-            System.out.println(trip.get("plannedDurationInMinutes"));
-            JsonArray legs = trip.getAsJsonArray("legs");
-            IntStream.range(0, legs.size()).mapToObj(j -> legs.get(j).getAsJsonObject()).map(leg -> leg.get("direction")).forEach(System.out::println);
-        });
-        */
+
 
     public JsonArray parseJson(String result) {
         JsonObject jsonObject = new JsonParser().parse(result).getAsJsonObject();
@@ -66,46 +62,109 @@ public class TravelService {
         return trips;
     }
 
-    //TODO Map Station
-    // Extract data needed for factory methods
 
-    public Station extractOriginStation(JsonArray trips) {
+    public List<Route> parsingStations(JsonArray trips) {
+
+        List<Route> routes = new ArrayList<>();
+
+        AtomicInteger index = new AtomicInteger(0);
         IntStream.range(0, trips.size()).mapToObj(i -> trips.get(i).getAsJsonObject()).forEach(trip -> {
-            System.out.println(trip.get("plannedDurationInMinutes"));
-            JsonArray legs = trip.getAsJsonArray("legs");
-            int bound = legs.size();
-            for (int j = 0; j < bound; j++) {
-                JsonObject leg = legs.get(j).getAsJsonObject();
-                String direction = leg.get("direction").getAsString();
-                JsonArray stops = leg.get("stops").getAsJsonArray();
-                JsonObject stop = stops.get(0).getAsJsonObject();
-                String originName = stop.get("name").getAsString();
-                String actualDepartureDateTime;
-                String plannedDepartureTime = stop.get("plannedDepartureDateTime").getAsString();
-                if (stop.get("actualDepartureDateTime") != null) {
-                    actualDepartureDateTime = stop.get("actualDepartureTime").getAsString();
+            Route route = new Route();
+            route.setIndex(index.getAndIncrement());
+            route.setPlannedDurationInMinutes(trip.get("plannedDurationInMinutes").getAsInt());
+            route.setTransfers(trip.get("transfers").getAsInt());
+            route.setStatus(trip.get("status").getAsString());
+            if (trip.get("status").getAsString().equals("CANCELLED")) {
+                System.out.println("This Route is cancelled. Do nothing");
+            } else {
+                JsonArray legs = trip.getAsJsonArray("legs");
+                if (legs.size() > 1) {
+                    List<Route> transferRoutes = new ArrayList<>();
+
+                    for (int j = 0; j < legs.size(); j++) {
+                        Route transferRoute = new Route();
+                        transferRoute.setIndex(j + 1);
+                        JsonObject leg = legs.get(j).getAsJsonObject();
+                        transferRoute.setDirection(leg.get("direction").getAsString());
+
+                        JsonArray stops = leg.get("stops").getAsJsonArray();
+                        List<Station> stations = extractAllStations(stops);
+                        transferRoute.setOrigin(stations.get(0));
+                        transferRoute.setDestination(stations.get(stations.size() - 1));
+                        List<Station> intermediateStation = new ArrayList<>();
+                        for (int i = 1; i < stations.size() - 1; i++) {
+                            intermediateStation.add(stations.get(i));
+                        }
+                        transferRoute.setStops(intermediateStation);
+                        transferRoutes.add(transferRoute);
+                    }
+
+                    route.setTransferRoutes(transferRoutes);
+
                 } else {
-                    actualDepartureDateTime = stop.get("plannedDepartureDateTime").getAsString();
+                    JsonObject leg = legs.get(0).getAsJsonObject();
+                    route.setDirection(leg.get("direction").getAsString());
+
+                    JsonArray stops = leg.get("stops").getAsJsonArray();
+                    List<Station> stations = extractAllStations(stops);
+                    route.setOrigin(stations.get(0));
+                    route.setDestination(stations.get(stations.size() - 1));
+                    List<Station> intermediateStation = new ArrayList<>();
+                    for (int i = 1; i < stations.size() - 1; i++) {
+                        intermediateStation.add(stations.get(i));
+                    }
+                    route.setStops(intermediateStation);
                 }
-                String plannedTrack=stop.get("plannedTrack").getAsString();
-                String actualTrack;
-                if(stop.get("actualTrack")!=null){
-                    actualTrack=stop.get("actualTrack").getAsString();
-                }
-                else{
-                    actualTrack=stop.get("plannedTrack").getAsString();
-                }
-                Station originStation = createOriginStation(originName, plannedDepartureTime, actualDepartureDateTime, plannedTrack, actualTrack);
-                return originStation;
+
+                routes.add(route);
             }
 
         });
+        return routes;
+    }
 
+    public List<Station> extractAllStations(JsonArray stops) {
+
+        List<Station> stationList = new ArrayList<>();
+
+        int stopSize = stops.size();
+        IntStream.range(0, stopSize).forEach((i) -> {
+            Station station = new Station();
+            JsonObject intermediateStops = stops.get(i).getAsJsonObject();
+            station.setName(intermediateStops.get("name").getAsString());
+            if (intermediateStops.has("passing")) {
+
+            } else {
+                station.setPlannedArrivalTime(intermediateStops.get("plannedArrivalDateTime").getAsString());
+                if (intermediateStops.has("actualArrivalDateTime")) {
+                    station.setActualArrivalTime(intermediateStops.get("actualArrivalDateTime").getAsString());
+                } else {
+                    station.setActualArrivalTime(intermediateStops.get("plannedArrivalDateTime").getAsString());
+                }
+                if (i != stopSize - 1) {
+                    if (intermediateStops.has("actualDepartureDateTime")) {
+                        station.setActualDepartureTime(intermediateStops.get("actualDepartureDateTime").getAsString());
+                    } else {
+                        station.setActualDepartureTime(intermediateStops.get("plannedDepartureDateTime").getAsString());
+                    }
+                }
+                station.setPlannedTrack(intermediateStops.get("plannedArrivalTrack").getAsString());
+
+                if (intermediateStops.has("actualArrivalTrack")) {
+                    station.setActualTrack(intermediateStops.get("actualArrivalTrack").getAsString());
+                } else {
+                    station.setActualTrack(intermediateStops.get("plannedArrivalTrack").getAsString());
+                }
+                stationList.add(station);
+            }
+        });
+        return stationList;
 
     }
 
-    //TODO Map Trip
-
-    //TODO Map Route
 
 }
+
+
+
+

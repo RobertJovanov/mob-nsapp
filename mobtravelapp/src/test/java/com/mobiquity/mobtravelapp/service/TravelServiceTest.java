@@ -51,8 +51,8 @@ public class TravelServiceTest {
     @Test
     public void checkIfStationIsSerialized(){
         JsonArray jsonArray = getJsonArrayFromTestResource();
-        Station expectedStation = Station.createOriginStation("Amsterdam Zuid", "2019-10-09T09:15:00+0200",
-                "2019-10-09T09:15:00+0200", "2", "2");
+//        Station expectedStation = Station.createOriginStation("Amsterdam Zuid", "2019-10-09T09:15:00+0200",
+//                "2019-10-09T09:15:00+0200", "2", "2");
 //        assertThat(expectedStation, travelService.extractOriginStation(jsonArray));
     }
 
