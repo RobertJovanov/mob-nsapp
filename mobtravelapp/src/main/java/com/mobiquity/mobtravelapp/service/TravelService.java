@@ -29,7 +29,7 @@ public class TravelService {
     @Value("${ns.nl.api.url}")
     private String uri;
 
-    final String key = "7504c483d91f486a82b917743521ab40";
+    final String key = System.getenv("NSAPIKEY");
 
     public Trip getRoutes(RouteModel routeModel) {
         String url = MessageFormat.format(uri, "fromStation=" + routeModel.getFromStation(), "toStation=" + routeModel.getToStation(), "dateTime=" + routeModel.getDateTime());
@@ -54,7 +54,6 @@ public class TravelService {
         return trips;
     }
 
-
     public List<Route> extractingAllTheRoutes(JsonArray trips) {
         List<Route> routes = new ArrayList<>();
         AtomicInteger index = new AtomicInteger(1);
@@ -76,8 +75,6 @@ public class TravelService {
         return routes;
     }
 
-
-
     public List<Leg> extractAllTheLeg(JsonArray legs){
         List<Leg> legList=new ArrayList<>();
         for(int j=0;j<legs.size();j++){
@@ -97,8 +94,6 @@ public class TravelService {
         }
         return legList;
     }
-
-
 
     public List<Station> extractAllStations(JsonArray stops) {
 
@@ -136,9 +131,7 @@ public class TravelService {
             }
         });
         return stationList;
-
     }
-
 
 }
 
