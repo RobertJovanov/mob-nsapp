@@ -1,15 +1,10 @@
 package com.mobiquity.mobtravelapp.model.travelModel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.List;
 
-@AllArgsConstructor
 @Getter
-@Setter
-@NoArgsConstructor
-
+@Builder
 public class Leg {
     private String direction;
     private OriginStub origin;

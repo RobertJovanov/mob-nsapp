@@ -1,18 +1,14 @@
 package com.mobiquity.mobtravelapp.model.travelModel;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.List;
 
-@AllArgsConstructor
 @Getter
-@Setter
-@NoArgsConstructor
+@Builder
 public class Route {
     private int index;
-    private int PlannedDurationInMinutes;
+    private int plannedDurationInMinutes;
     private int transfers;
     private String status;
     private List<Leg> legs;

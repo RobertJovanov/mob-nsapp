@@ -1,10 +1,16 @@
 package com.mobiquity.mobtravelapp.model.travelModel;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
+@Builder
+@Getter
 public class OriginStub {
-    protected String plannedDepartureTime;
-   protected String actualDepartureTime;
-    protected String plannedTrack;
-    protected String actualTrack;
-    protected Station station;
+    private String plannedDepartureTime;
+    private String actualDepartureTime;
+    private String plannedTrack;
+    private String actualTrack;
+    private Station station;
 
 }

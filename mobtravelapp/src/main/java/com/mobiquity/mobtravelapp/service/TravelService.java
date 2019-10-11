@@ -1,6 +1,7 @@
 package com.mobiquity.mobtravelapp.service;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.model.travelModel.*;
@@ -43,101 +44,156 @@ public class TravelService {
         ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         System.out.println(result.getBody());
 
-        JsonArray trips = extractingAllTheTrips(result.getBody());
-        return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), extractingAllTheRoutes(trips));
+        JsonArray trips = extractingAllTrips(result.getBody());
+        return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), extractingAllRoutes(trips));
     }
 
 
-    public JsonArray extractingAllTheTrips(String result) {
+    public JsonArray extractingAllTrips(String result) {
         JsonObject jsonObject = new JsonParser().parse(result).getAsJsonObject();
         JsonArray trips = jsonObject.getAsJsonArray("trips");
         return trips;
     }
 
 
-    public List<Route> extractingAllTheRoutes(JsonArray trips) {
+    public List<Route> extractingAllRoutes(JsonArray trips) {
         List<Route> routes = new ArrayList<>();
         AtomicInteger index = new AtomicInteger(1);
         IntStream.range(0, trips.size()).mapToObj(i -> trips.get(i).getAsJsonObject()).forEach(trip -> {
-            Route route = new Route();
-            route.setIndex(index.getAndIncrement());
-            route.setPlannedDurationInMinutes(trip.get("plannedDurationInMinutes").getAsInt());
-            route.setTransfers(trip.get("transfers").getAsInt());
-            route.setStatus(trip.get("status").getAsString());
-            if (trip.get("status").getAsString().equals("CANCELLED")) {
-                System.out.println("This Route is cancelled. Do nothing");
-            } else {
-                JsonArray legs = trip.getAsJsonArray("legs");
-                route.setLegs( extractAllTheLeg(legs));
-            }
-            routes.add(route);
+            if(trip.get("status").getAsString().equals("CANCELLED")){
+                Route route = Route.builder()
+                        .index(index.getAndIncrement())
+                        .status(trip.get("status").getAsString())
+                        .build();
 
+                routes.add(route);
+            }else {
+                Route route = Route.builder()
+                        .index(index.getAndIncrement())
+                        .plannedDurationInMinutes(trip.get("plannedDurationInMinutes").getAsInt())
+                        .transfers(trip.get("status").getAsInt())
+                        .status(trip.get("status").getAsString())
+                        .legs(extractAllLegs(trip.get("legs").getAsJsonArray()))
+                        .build();
+
+                routes.add(route);
+            }
         });
         return routes;
     }
 
 
+        public List<StopStub> extractAllTheStops(JsonArray legs){
+            List<StopStub> legList = new ArrayList<>();
+            IntStream.range(1, legs.size()-1).mapToObj(i -> legs.get(i).getAsJsonObject()).forEach(leg -> {
+                 StopStub stopStub = StopStub.builder()
+                        .actualArrivalTime(leg.get("actualArrivalDateTime").getAsString())
+                        .plannedArrivalTime(leg.get("plannedArrivalTime").getAsString())
+                        .actualDepartureTime(leg.get("actualDepartureTime").getAsString())
+                        .plannedDepartureTime(leg.get("plannedDepartureTime").getAsString())
+                        .actualTrack(leg.get("actualTrack").getAsString())
+                        .plannedTrack(leg.get("plannedTrack").getAsString())
+                        .station(extractStation(leg.get("station")))
+                        .build();
 
-    public List<Leg> extractAllTheLeg(JsonArray legs){
-        List<Leg> legList=new ArrayList<>();
-        for(int j=0;j<legs.size();j++){
-            Leg leg=new Leg();
-            JsonObject legFromNs = legs.get(j).getAsJsonObject();
-            leg.setDirection(legFromNs.get("direction").getAsString());
-            JsonArray stops = legFromNs.get("stops").getAsJsonArray();
-            List<Station> stations = extractAllStations(stops);
-            leg.setOrigin(stations.get(0));
-            leg.setDestination(stations.get(stations.size() - 1));
-            List<Station> intermediateStation = new ArrayList<>();
-            for (int i = 1; i < stations.size() - 1; i++) {
-                intermediateStation.add(stations.get(i));
-            }
-            leg.setStops(intermediateStation);
-            legList.add(leg);
-        }
-        return legList;
+                 legList.add(stopStub);
+            });
+
+            return legList;
+    }
+
+    //TODO see if we need this, and check the json hier.
+    public Station extractStation(JsonArray stations){
+        JsonObject jsonObject = stations.get(0).getAsJsonObject();
+        return Station.builder()
+                .name(jsonObject.get("name").getAsString())
+                .latitude(jsonObject.get("lat").getAsString())
+                .longitude(jsonObject.get("lng").getAsString())
+                .build();
     }
 
 
+    public OriginStub extractOriginStub(JsonArray legs) {
+        JsonObject jsonObject = legs.get(0).getAsJsonObject();
+        return  OriginStub.builder()
+                .actualDepartureTime(jsonObject.get("actualDepartureTime").getAsString())
+                .plannedDepartureTime(jsonObject.get("plannedDepartureTime").getAsString())
+                .actualTrack(jsonObject.get("actualTrack").getAsString())
+                .plannedTrack(jsonObject.get("plannedTrack").getAsString())
+                .station(extractStation(legs))
+                .build();
+    }
 
-    public List<Station> extractAllStations(JsonArray stops) {
 
-        List<Station> stationList = new ArrayList<>();
+    public DestinationStub extarctDestinationStub(JsonArray legs){
+        JsonObject jsonObject = legs.get(legs.size()-1).getAsJsonObject();
+        return DestinationStub.builder()
+                .actualArrivalTime(jsonObject.get("actualArrivalTime").getAsString())
+                .plannedArrivalTime(jsonObject.get("plannedArrivalTime").getAsString())
+                .actualTrack(jsonObject.get("actualTrack").getAsString())
+                .plannedTrack(jsonObject.get("plannedTrack").getAsString())
+                .station(extractStation(legs.get(0)))
+                .build();
+    }
 
-        int stopSize = stops.size();
-        IntStream.range(0, stopSize).forEach((i) -> {
-            Station station = new Station();
-            JsonObject intermediateStops = stops.get(i).getAsJsonObject();
-            station.setName(intermediateStops.get("name").getAsString());
-            if (intermediateStops.has("passing")) {
+    public List<Leg> extractAllLegs(JsonArray trips){
 
-            } else {
-                station.setPlannedArrivalTime(intermediateStops.get("plannedArrivalDateTime").getAsString());
-                if (intermediateStops.has("actualArrivalDateTime")) {
-                    station.setActualArrivalTime(intermediateStops.get("actualArrivalDateTime").getAsString());
-                } else {
-                    station.setActualArrivalTime(intermediateStops.get("plannedArrivalDateTime").getAsString());
-                }
-                if (i != stopSize - 1) {
-                    if (intermediateStops.has("actualDepartureDateTime")) {
-                        station.setActualDepartureTime(intermediateStops.get("actualDepartureDateTime").getAsString());
-                    } else {
-                        station.setActualDepartureTime(intermediateStops.get("plannedDepartureDateTime").getAsString());
-                    }
-                }
-                station.setPlannedTrack(intermediateStops.get("plannedArrivalTrack").getAsString());
+        List<Leg> legs = new ArrayList<>();
+        IntStream.range(0,trips.size()).mapToObj(i -> trips.get(i).getAsJsonObject()).forEach(trip -> {
+           Leg leg = Leg.builder()
+                  .direction(trip.get("direction").getAsString())
+                   .origin(extractOriginStub(trip.get("legs").getAsJsonArray()))
+                   .destination(extarctDestinationStub(trip.get("legs").getAsJsonArray()))
+                   .stops(extractAllTheStops(trip.get("legs").getAsJsonArray()))
+                   .build();
 
-                if (intermediateStops.has("actualArrivalTrack")) {
-                    station.setActualTrack(intermediateStops.get("actualArrivalTrack").getAsString());
-                } else {
-                    station.setActualTrack(intermediateStops.get("plannedArrivalTrack").getAsString());
-                }
-                stationList.add(station);
-            }
+            legs.add(leg);
         });
-        return stationList;
 
+        return legs;
     }
+
+
+
+//
+//    public List<Station> extractAllStations(JsonArray stops) {
+//
+//        List<Station> stationList = new ArrayList<>();
+//
+//        int stopSize = stops.size();
+//        IntStream.range(0, stopSize).forEach((i) -> {
+//            Station station = new Station();
+//            JsonObject intermediateStops = stops.get(i).getAsJsonObject();
+//            station.setName(intermediateStops.get("name").getAsString());
+//            if (intermediateStops.has("passing")) {
+//
+//            } else {
+//                station.setPlannedArrivalTime(intermediateStops.get("plannedArrivalDateTime").getAsString());
+//                if (intermediateStops.has("actualArrivalDateTime")) {
+//                    station.setActualArrivalTime(intermediateStops.get("actualArrivalDateTime").getAsString());
+//                } else {
+//                    station.setActualArrivalTime(intermediateStops.get("plannedArrivalDateTime").getAsString());
+//                }
+//                if (i != stopSize - 1) {
+//                    if (intermediateStops.has("actualDepartureDateTime")) {
+//                        station.setActualDepartureTime(intermediateStops.get("actualDepartureDateTime").getAsString());
+//                    } else {
+//                        station.setActualDepartureTime(intermediateStops.get("plannedDepartureDateTime").getAsString());
+//                    }
+//                }
+//                station.setPlannedTrack(intermediateStops.get("plannedArrivalTrack").getAsString());
+//
+//                if (intermediateStops.has("actualArrivalTrack")) {
+//                    station.setActualTrack(intermediateStops.get("actualArrivalTrack").getAsString());
+//                } else {
+//                    station.setActualTrack(intermediateStops.get("plannedArrivalTrack").getAsString());
+//                }
+//                stationList.add(station);
+//            }
+//        });
+//        return stationList;
+//
+//    }
 
 
 

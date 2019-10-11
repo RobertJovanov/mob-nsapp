@@ -1,14 +1,10 @@
 package com.mobiquity.mobtravelapp.model.travelModel;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@AllArgsConstructor
+
+@Builder
 @Getter
-@Setter
-@NoArgsConstructor
 public class RouteModel {
     private String fromStation;
     private String toStation;

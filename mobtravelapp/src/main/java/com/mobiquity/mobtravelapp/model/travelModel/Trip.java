@@ -1,5 +1,6 @@
 package com.mobiquity.mobtravelapp.model.travelModel;
 
+import com.google.gson.JsonArray;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,5 @@ public class Trip {
     public static Trip createTrip(String fromStation, String toStation, String dateTime, List<Route> extractingAllTheRoutes) {
         return new Trip(fromStation,toStation,dateTime,extractingAllTheRoutes);
     }
+
 }
