@@ -1,5 +1,11 @@
 node{
 
+    // Get the NS API key from Kubernetes (we need this for tests to work)
+    NSAPIKEY = sh (
+        script: "kubectl get secrets nsapikey --template='{{ .data.NSAPIKEY }}' | base64 --decode",
+        returnStdout: true
+    )
+
     stage("Checkout") {
         checkout([
             $class: 'GitSCM',
@@ -13,8 +19,10 @@ node{
 
     stage("Build") {
         dir('mobtravelapp') {
-            sh 'mvn clean package'
-            archiveArtifacts 'target/mobtravelapp-0.0.1-SNAPSHOT.jar'
+            withEnv(["NSAPIKEY=${NSAPIKEY}"]) {
+                sh 'mvn clean package'
+                archiveArtifacts 'target/mobtravelapp-0.0.1-SNAPSHOT.jar'
+            }
         }
     }
 
@@ -31,10 +39,8 @@ node{
     }
 
     stage("Deploy to EKS") {
-        withEnv(['PATH+EXTRA=/usr/local/bin']) {
-            sh 'helm lint --strict ./helm/hello-world/'
-            sh 'helm upgrade --install hello-world ./helm/hello-world/'
-        }
+        sh "helm lint --strict ./helm/hello-world/"
+        sh "helm upgrade --install hello-world ./helm/hello-world/"
     }
 }
 
