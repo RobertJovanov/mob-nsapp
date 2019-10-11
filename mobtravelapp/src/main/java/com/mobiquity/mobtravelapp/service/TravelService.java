@@ -25,31 +25,26 @@ import java.util.stream.IntStream;
 public class TravelService {
 
     private final Logger logger = LoggerFactory.getLogger(TravelService.class);
-    // Route route = new Route();
-
 
     @Value("${ns.nl.api.url}")
     private String uri;
 
-
     final String key = "7504c483d91f486a82b917743521ab40";
-
 
     public Trip getRoutes(RouteModel routeModel) {
         String url = MessageFormat.format(uri, "fromStation=" + routeModel.getFromStation(), "toStation=" + routeModel.getToStation(), "dateTime=" + routeModel.getDateTime());
-        RestTemplate restTemplate = new RestTemplate();
-        // System.out.println(url);
         logger.info(url);
 
+        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Ocp-Apim-Subscription-Key", key);
 
         HttpEntity<String> entity = new HttpEntity<String>(httpHeaders);
         ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         System.out.println(result.getBody());
+
         JsonArray trips = extractingAllTheTrips(result.getBody());
         return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), extractingAllTheRoutes(trips));
-
     }
 
 
@@ -61,12 +56,9 @@ public class TravelService {
 
 
     public List<Route> extractingAllTheRoutes(JsonArray trips) {
-
         List<Route> routes = new ArrayList<>();
-
         AtomicInteger index = new AtomicInteger(1);
         IntStream.range(0, trips.size()).mapToObj(i -> trips.get(i).getAsJsonObject()).forEach(trip -> {
-
             Route route = new Route();
             route.setIndex(index.getAndIncrement());
             route.setPlannedDurationInMinutes(trip.get("plannedDurationInMinutes").getAsInt());
@@ -76,33 +68,37 @@ public class TravelService {
                 System.out.println("This Route is cancelled. Do nothing");
             } else {
                 JsonArray legs = trip.getAsJsonArray("legs");
-                List<Leg> legList=new ArrayList<>();
-                for(int j=0;j<legs.size();j++){
-                    Leg leg=new Leg();
-                    JsonObject legFromNs = legs.get(j).getAsJsonObject();
-                    leg.setDirection(legFromNs.get("direction").getAsString());
-                    JsonArray stops = legFromNs.get("stops").getAsJsonArray();
-                    List<Station> stations = extractAllStations(stops);
-                    leg.setOrigin(stations.get(0));
-                    leg.setDestination(stations.get(stations.size() - 1));
-                    List<Station> intermediateStation = new ArrayList<>();
-
-
-                    for (int i = 1; i < stations.size() - 1; i++) {
-                        intermediateStation.add(stations.get(i));
-                    }
-                    leg.setStops(intermediateStation);
-                    legList.add(leg);
-                }
-
-                route.setLegs(legList);
-
+                route.setLegs( extractAllTheLeg(legs));
             }
             routes.add(route);
 
         });
         return routes;
     }
+
+
+
+    public List<Leg> extractAllTheLeg(JsonArray legs){
+        List<Leg> legList=new ArrayList<>();
+        for(int j=0;j<legs.size();j++){
+            Leg leg=new Leg();
+            JsonObject legFromNs = legs.get(j).getAsJsonObject();
+            leg.setDirection(legFromNs.get("direction").getAsString());
+            JsonArray stops = legFromNs.get("stops").getAsJsonArray();
+            List<Station> stations = extractAllStations(stops);
+            leg.setOrigin(stations.get(0));
+            leg.setDestination(stations.get(stations.size() - 1));
+            List<Station> intermediateStation = new ArrayList<>();
+            for (int i = 1; i < stations.size() - 1; i++) {
+                intermediateStation.add(stations.get(i));
+            }
+            leg.setStops(intermediateStation);
+            legList.add(leg);
+        }
+        return legList;
+    }
+
+
 
     public List<Station> extractAllStations(JsonArray stops) {
 

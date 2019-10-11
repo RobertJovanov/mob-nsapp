@@ -1,57 +1,22 @@
 package com.mobiquity.mobtravelapp.model;
 
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.List;
+@AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class Trip {
     private String origin;
     private String destination;
     private String dateTime;
     private List<Route> routes;
 
-    public Trip() {
-
-    }
-
-    private Trip(String origin, String destination, String dateTime, List<Route> routes){
-        this.origin = origin;
-        this.destination = destination;
-        this.dateTime = dateTime;
-        this.routes = routes;
-    }
-
-    public static Trip createTrip(String origin, String destination, String dateTime, List<Route> routes){
-        return new Trip(origin, destination, dateTime, routes);
-    }
-
-    public String getOrigin() {
-        return origin;
-    }
-
-    public void setOrigin(String origin) {
-        this.origin = origin;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public String getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public List<Route> getRoutes() {
-        return routes;
-    }
-
-    public void setRoutes(List<Route> routes) {
-        this.routes = routes;
+    public static Trip createTrip(String fromStation, String toStation, String dateTime, List<Route> extractingAllTheRoutes) {
+        return new Trip(fromStation,toStation,dateTime,extractingAllTheRoutes);
     }
 }
