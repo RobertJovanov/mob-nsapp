@@ -3,7 +3,7 @@ package com.mobiquity.mobtravelapp.service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mobiquity.mobtravelapp.model.*;
+import com.mobiquity.mobtravelapp.model.travelModel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -138,6 +138,10 @@ public class TravelService {
         return stationList;
 
     }
+
+
+
+
 
 
 }

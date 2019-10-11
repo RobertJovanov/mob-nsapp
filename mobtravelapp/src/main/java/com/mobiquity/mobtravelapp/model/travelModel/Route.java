@@ -1,4 +1,4 @@
-package com.mobiquity.mobtravelapp.model;
+package com.mobiquity.mobtravelapp.model.travelModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

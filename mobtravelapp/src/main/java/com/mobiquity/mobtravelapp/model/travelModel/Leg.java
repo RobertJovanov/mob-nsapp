@@ -1,4 +1,4 @@
-package com.mobiquity.mobtravelapp.model;
+package com.mobiquity.mobtravelapp.model.travelModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,9 @@ import java.util.List;
 
 public class Leg {
     private String direction;
-    private Station origin;
-    private Station destination;
-    private List<Station> stops;
+    private OriginStub origin;
+    private DestinationStub destination;
+    private List<StopStub> stops;
+
+
 }

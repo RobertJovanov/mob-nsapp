@@ -1,4 +1,4 @@
-package com.mobiquity.mobtravelapp.model;
+package com.mobiquity.mobtravelapp.model.travelModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,4 +13,5 @@ public class RouteModel {
     private String fromStation;
     private String toStation;
     private String dateTime;
+    private int routeLimit;
 }
