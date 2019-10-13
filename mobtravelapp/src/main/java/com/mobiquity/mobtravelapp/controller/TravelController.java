@@ -18,7 +18,7 @@ public class TravelController {
 
     @GetMapping("/routes")
     public Trip getRoutes(@RequestParam(value ="fromStation") String fromStation, @RequestParam(value = "toStation") String toStation, @RequestParam(value = "dateTime") String dateTime, @RequestParam(defaultValue = "0") int routeLimit) throws IOException {
-         return travelService.getRoutes(new RouteModel(fromStation, toStation, dateTime,routeLimit));
+         return travelService.getRoutes(RouteModel.builder().fromStation(fromStation).toStation( toStation).dateTime( dateTime).routeLimit(routeLimit).build());
     }
 
 

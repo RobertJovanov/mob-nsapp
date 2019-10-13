@@ -5,6 +5,7 @@ import lombok.*;
 
 @Builder
 @Getter
+@Setter
 public class RouteModel {
     private String fromStation;
     private String toStation;

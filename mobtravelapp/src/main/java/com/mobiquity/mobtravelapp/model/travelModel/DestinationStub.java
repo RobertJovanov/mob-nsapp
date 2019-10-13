@@ -7,10 +7,10 @@ import lombok.Getter;
 @Builder
 @Getter
 public class DestinationStub {
-    private String plannedArrivalTime;
-    private String actualArrivalTime;
-    private String plannedTrack;
-    private String actualTrack;
+    private String plannedArrivalDateTime;
+    private String actualArrivalDateTime;
+    private String plannedArrivalTrack;
+    private String actualArrivalTrack;
     private Station station;
 
 }
