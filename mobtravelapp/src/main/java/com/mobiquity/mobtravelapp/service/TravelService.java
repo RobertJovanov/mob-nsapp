@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.MessageFormat;
@@ -67,10 +68,14 @@ public class TravelService {
         httpHeaders.add("Ocp-Apim-Subscription-Key", key);
 
         HttpEntity<String> entity = new HttpEntity<String>(httpHeaders);
-        ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-        System.out.println(result.getBody());
-
+        ResponseEntity<String> result;
+        try {
+            result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        } catch (RestClientException e) {
+            throw new IncorrectFormatException("Bad Request Parameters");
+        }
         JsonArray trips = extractAllTrips(result.getBody());
+        System.out.println(result.getBody());
         return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), extractAllRoutes(trips));
     }
 
@@ -233,17 +238,17 @@ public class TravelService {
     private String setActualTrack(JsonObject jsonObject) {
         if (jsonObject.has("actualArrivalTrack")) {
             return jsonObject.get("actualArrivalTrack").getAsString();
-        }else if(jsonObject.has("plannedArrivalTrack")){
+        } else if (jsonObject.has("plannedArrivalTrack")) {
             return jsonObject.get("plannedArrivalTrack").getAsString();
-        }else{
+        } else {
             return null;
         }
     }
 
     private String setPlannedTrack(JsonObject jsonObject) {
-       if(jsonObject.has("plannedArrivalTrack")){
+        if (jsonObject.has("plannedArrivalTrack")) {
             return jsonObject.get("plannedArrivalTrack").getAsString();
-        }else{
+        } else {
             return null;
         }
     }

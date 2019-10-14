@@ -22,4 +22,5 @@ public class TravelController {
         return travelService.getTripFromNs(RouteModel.builder().fromStation(fromStation).toStation(toStation).dateTime(dateTime).routeLimit(routeLimit).build());
     }
 
+
 }
