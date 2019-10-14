@@ -32,7 +32,7 @@ public class TravelService {
     @Value("${ns.nl.api.url}")
     private String uri;
 
-    final String key = "7504c483d91f486a82b917743521ab40";
+    final String key = System.getenv("NSAPIKEY");
 
     /**
      * Reformat the values of a RouteModel to adhere to our format standard.
