@@ -2,6 +2,8 @@ package com.mobiquity.mobtravelapp.service;
 
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.model.travelModel.Route;
 import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
@@ -53,25 +55,32 @@ public class TravelServiceTest {
 
     @Test
     public void checkingTimeFormat() {
+
         assertTrue(TravelValidation.checkInputTime(routeModel.getDateTime()));
     }
 
     @Test
-    @DisplayName("Json file should contain six routes when parsed")
-    public void checkThatJsonIsParsed() {
-
-        String jsonArray = getJsonArrayFromTestResource();
-
-    }
-    @Test
-
-    public void checkStationExtractionSuccessful(){
-        String jsonArray = getJsonArrayFromTestResource();
-
+    public void checkStationExtractionSuccessful() {
+        JsonObject jsonObject = new JsonParser().parse(getJsonArrayFromStopTestResource()).getAsJsonObject();
+        JsonArray stops = jsonObject.getAsJsonArray("stops");
+        assertEquals("Amsterdam Zuid", travelService.extractStation(stops.get(0).getAsJsonObject()).getName());
     }
 
     @Test
+    public void checkStopExtractionSuccessful() {
+        JsonObject jsonObject = new JsonParser().parse(getJsonArrayFromStopTestResource()).getAsJsonObject();
+        JsonArray stops = jsonObject.getAsJsonArray("stops");
+        assertEquals(1, travelService.extractAllStops(stops).size());
+    }
 
+    @Test
+    public void checkLegExtractSuccessful() {
+        JsonObject jsonObject = new JsonParser().parse(getJsonArrayFromLegTestResource()).getAsJsonObject();
+        JsonArray leg = jsonObject.getAsJsonArray("legs");
+        assertEquals(2, travelService.extractAllLegs(leg).size());
+    }
+
+    @Test
     public void checkRoutesExtractionSuccessful() {
         String trips = getJsonArrayFromTestResource();
         JsonArray expectedRoutes = travelService.extractAllTrips(trips);
@@ -79,13 +88,14 @@ public class TravelServiceTest {
         assertEquals(6, routes.size());
     }
 
-   /* @Test
-    public void checkStopExtractionSuccessful(){
-        JsonObject jsonObject = new JsonParser().parse(getJsonArrayFromStopTestResource()).getAsJsonObject();
-        JsonArray stops = jsonObject.getAsJsonArray("stops");
-       // assertEquals(3,travelService.extractAllStations(stops).size());
-    }*/
+    @Test
+    public void checkTripsExtractionSuccessful() {
+        String trips = getJsonArrayFromTestResource();
+        JsonArray expectedRoutes = travelService.extractAllTrips(trips);
+        assertEquals(6, expectedRoutes.size());
+    }
 
+    //Helper Method
 
     private String getJsonArrayFromTestResource() {
         Stream<String> jsonContent = null;
@@ -108,4 +118,16 @@ public class TravelServiceTest {
         String jsonString = jsonContent.collect(Collectors.joining());
         return jsonString;
     }
+
+    private String getJsonArrayFromLegTestResource() {
+        Stream<String> jsonContent = null;
+        try {
+            jsonContent = Files.lines(Paths.get("src/test/resources/legsTest.json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String jsonString = jsonContent.collect(Collectors.joining());
+        return jsonString;
+    }
+
 }

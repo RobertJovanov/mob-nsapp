@@ -102,7 +102,7 @@ public class TravelService {
         List<Route> routes = new ArrayList<>();
         AtomicInteger index = new AtomicInteger(1);
         IntStream.range(0, trips.size()).mapToObj(i -> trips.get(i).getAsJsonObject()).forEach(trip -> {
-            if (trip.get("status").getAsString().equals("CANCELLED")) {
+            if (!trip.get("status").getAsString().equals("NORMAL")) {
                 Route route = Route.builder()
                         .index(index.getAndIncrement())
                         .status(trip.get("status").getAsString())
