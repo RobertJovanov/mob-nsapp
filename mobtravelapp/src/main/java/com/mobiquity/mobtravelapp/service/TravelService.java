@@ -64,7 +64,7 @@ public class TravelService {
             route.setPlannedDurationInMinutes(trip.get("plannedDurationInMinutes").getAsInt());
             route.setTransfers(trip.get("transfers").getAsInt());
             route.setStatus(trip.get("status").getAsString());
-            if (trip.get("status").getAsString().equals("CANCELLED")) {
+            if (trip.get("status").getAsString().equals("CANCELLED")||trip.get("status").getAsString().equals("DISRUPTION")) {
                 System.out.println("This Route is cancelled. Do nothing");
             } else {
                 JsonArray legs = trip.getAsJsonArray("legs");
@@ -109,9 +109,7 @@ public class TravelService {
             Station station = new Station();
             JsonObject intermediateStops = stops.get(i).getAsJsonObject();
             station.setName(intermediateStops.get("name").getAsString());
-            if (intermediateStops.has("passing")) {
-
-            } else {
+            if (!intermediateStops.has("passing")) {
                 station.setPlannedArrivalTime(intermediateStops.get("plannedArrivalDateTime").getAsString());
                 if (intermediateStops.has("actualArrivalDateTime")) {
                     station.setActualArrivalTime(intermediateStops.get("actualArrivalDateTime").getAsString());
