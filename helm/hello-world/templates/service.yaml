@@ -9,3 +9,5 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
+      nodePort:   # WORKAROUND for Kubernetes issue #33766
+                  # (an empty value for `nodePort`)
