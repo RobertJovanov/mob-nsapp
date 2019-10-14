@@ -1,4 +1,4 @@
-package com.mobiquity.mobtravelapp.model;
+package com.mobiquity.mobtravelapp.model.travelModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+
 @AllArgsConstructor
 @Getter
 @Setter
@@ -19,4 +20,5 @@ public class Trip {
     public static Trip createTrip(String fromStation, String toStation, String dateTime, List<Route> extractingAllTheRoutes) {
         return new Trip(fromStation,toStation,dateTime,extractingAllTheRoutes);
     }
+
 }
