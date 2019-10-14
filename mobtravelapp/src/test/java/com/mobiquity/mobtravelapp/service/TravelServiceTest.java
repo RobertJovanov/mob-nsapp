@@ -1,6 +1,5 @@
 package com.mobiquity.mobtravelapp.service;
 
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -9,6 +8,7 @@ import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -37,66 +36,69 @@ public class TravelServiceTest {
     @Before
     public void setUp() {
         ReflectionTestUtils.setField(travelService, "uri", "https://gateway.apiportal.ns.nl/public-reisinformatie/api/v3/trips?{0}&{1}&{2}");
+        ReflectionTestUtils.setField(travelService, "key", System.getenv("NSAPIKEY"));
     }
 
     @Test
-    public void getRoutes() throws Exception {
-
-        travelService.reformatRoutes(routeModel);
-    }
-
-    @Test
-    public void checkingInputIsCaseInSensitive() {
-        String fromStation = TravelValidation.checkInputStations(routeModel.getFromStation());
-        String toStation = TravelValidation.checkInputStations(routeModel.getToStation());
+    public void checkIfInputIsCaseInsensitive() {
+        String fromStation = TravelValidation.reformatStationName("amsterdam zuid");
+        String toStation = TravelValidation.reformatStationName("duivendrecht");
         assertEquals("Amsterdam Zuid", fromStation);
         assertEquals("Duivendrecht", toStation);
     }
 
     @Test
-    public void checkingTimeFormat() {
-
-        assertTrue(TravelValidation.checkInputTime(routeModel.getDateTime()));
+    public void checkTimeFormatCorrectFormat() {
+        assertTrue(TravelValidation.checkInputTime("2019-10-09T12:30:00Z"));
     }
 
     @Test
-    public void checkStationExtractionSuccessful() {
+    public void checkTimeFormatIncorrectFormat(){
+        assertFalse(TravelValidation.checkInputTime("noon"));
+    }
+
+    @Disabled
+    @Test
+    public void getRoutes() throws Exception {
+        travelService.getTripFromNs(routeModel);
+    }
+
+    @Test
+    @DisplayName("Should extract first station name")
+    public void checkIfStationExtractionIsSuccessful() {
         JsonObject jsonObject = new JsonParser().parse(getJsonArrayFromStopTestResource()).getAsJsonObject();
         JsonArray stops = jsonObject.getAsJsonArray("stops");
         assertEquals("Amsterdam Zuid", travelService.extractStation(stops.get(0).getAsJsonObject()).getName());
+        assertEquals("52.339027", travelService.extractStation(stops.get(0).getAsJsonObject()).getLatitude());
+        assertEquals("4.873061", travelService.extractStation(stops.get(0).getAsJsonObject()).getLongitude());
     }
 
     @Test
-    public void checkStopExtractionSuccessful() {
+    @DisplayName("stopsJson test resource contains one stop which we should extract")
+    public void checkIfStopStubExtractionIsSuccessful() {
         JsonObject jsonObject = new JsonParser().parse(getJsonArrayFromStopTestResource()).getAsJsonObject();
         JsonArray stops = jsonObject.getAsJsonArray("stops");
         assertEquals(1, travelService.extractAllStops(stops).size());
     }
 
     @Test
-    public void checkLegExtractSuccessful() {
+    @DisplayName("legTest resource contains two legs which we should extract")
+    public void checkIfLegExtractionIsSuccessful() {
         JsonObject jsonObject = new JsonParser().parse(getJsonArrayFromLegTestResource()).getAsJsonObject();
         JsonArray leg = jsonObject.getAsJsonArray("legs");
         assertEquals(2, travelService.extractAllLegs(leg).size());
     }
 
     @Test
-    public void checkRoutesExtractionSuccessful() {
+    @DisplayName("jsonTest resource contains six routes which we should should extract")
+    public void checkIfRoutesExtractionIsSuccessful() {
         String trips = getJsonArrayFromTestResource();
         JsonArray expectedRoutes = travelService.extractAllTrips(trips);
         List<Route> routes = travelService.extractAllRoutes(expectedRoutes);
         assertEquals(6, routes.size());
     }
 
-    @Test
-    public void checkTripsExtractionSuccessful() {
-        String trips = getJsonArrayFromTestResource();
-        JsonArray expectedRoutes = travelService.extractAllTrips(trips);
-        assertEquals(6, expectedRoutes.size());
-    }
-
-    //Helper Method
-
+    //Helper methods
     private String getJsonArrayFromTestResource() {
         Stream<String> jsonContent = null;
         try {

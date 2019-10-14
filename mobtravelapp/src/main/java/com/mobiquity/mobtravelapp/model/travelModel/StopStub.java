@@ -1,7 +1,5 @@
 package com.mobiquity.mobtravelapp.model.travelModel;
 
-
-
 import lombok.Builder;
 import lombok.Getter;
 

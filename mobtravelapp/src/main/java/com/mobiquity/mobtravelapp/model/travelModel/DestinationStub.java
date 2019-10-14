@@ -3,7 +3,6 @@ package com.mobiquity.mobtravelapp.model.travelModel;
 import lombok.Builder;
 import lombok.Getter;
 
-
 @Builder
 @Getter
 public class DestinationStub {

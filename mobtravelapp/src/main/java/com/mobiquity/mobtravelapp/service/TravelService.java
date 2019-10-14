@@ -22,10 +22,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
-
 @Service
 public class TravelService {
-
 
     private final Logger logger = LoggerFactory.getLogger(TravelService.class);
 
@@ -42,28 +40,26 @@ public class TravelService {
      * @param routeModel
      * @return
      */
-    public Trip reformatRoutes(RouteModel routeModel) throws Exception {
-
+    public RouteModel reformatRoutes(RouteModel routeModel) throws Exception {
         if (!TravelValidation.checkInputTime(routeModel.getDateTime())) {
             throw new IncorrectFormatException("Date Time should be formatted as: yyyy-mm-dd'T'HH:MM:ss'Z'");
         }
-        RouteModel routeModelAfterValidation = RouteModel.builder().fromStation(TravelValidation.checkInputStations(routeModel.getFromStation()))
-                .toStation(TravelValidation.checkInputStations(routeModel.getToStation()))
+        return RouteModel.builder().fromStation(TravelValidation.reformatStationName(routeModel.getFromStation()))
+                .toStation(TravelValidation.reformatStationName(routeModel.getToStation()))
                 .dateTime(routeModel.getDateTime())
                 .routeLimit(routeModel.getRouteLimit()).build();
-        return getTripFromNs(routeModelAfterValidation);
-
     }
 
     /**
      * Get all the trips by making api call to ns.nl
      *
-     * @param routeModelAfterValidation
+     * @param routeModel
      * @return Trip model which has list of routes
      */
-
-    public Trip getTripFromNs(RouteModel routeModelAfterValidation) {
-        String url = MessageFormat.format(uri, "fromStation=" + routeModelAfterValidation.getFromStation(), "toStation=" + routeModelAfterValidation.getToStation(), "dateTime=" + routeModelAfterValidation.getDateTime());
+    public Trip getTripFromNs(RouteModel routeModel) throws Exception {
+        RouteModel routeModelAfterReformat = reformatRoutes(routeModel);
+        String url = MessageFormat.format(uri, "fromStation=" + routeModelAfterReformat.getFromStation(),
+                "toStation=" + routeModelAfterReformat.getToStation(), "dateTime=" + routeModelAfterReformat.getDateTime());
         logger.info(url);
 
         RestTemplate restTemplate = new RestTemplate();
@@ -75,9 +71,8 @@ public class TravelService {
         System.out.println(result.getBody());
 
         JsonArray trips = extractAllTrips(result.getBody());
-        return Trip.createTrip(routeModelAfterValidation.getFromStation(), routeModelAfterValidation.getToStation(), routeModelAfterValidation.getDateTime(), extractAllRoutes(trips));
+        return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), extractAllRoutes(trips));
     }
-
 
     /**
      * Extracts all trips from reading the result from ns.nl
@@ -85,7 +80,6 @@ public class TravelService {
      * @param result
      * @return trips  as jsonArray
      */
-
     public JsonArray extractAllTrips(String result) {
         JsonObject jsonObject = new JsonParser().parse(result).getAsJsonObject();
         JsonArray trips = jsonObject.getAsJsonArray("trips");
@@ -130,9 +124,7 @@ public class TravelService {
      * @param legArray
      * @return List of legs
      */
-
     public List<Leg> extractAllLegs(JsonArray legArray) {
-
         List<Leg> legs = new ArrayList<>();
         for (int i = 0; i < legArray.size(); i++) {
             JsonObject legAsJsonObject = legArray.get(i).getAsJsonObject();
@@ -153,18 +145,16 @@ public class TravelService {
      * @param stops
      * @return originStub
      */
-
     public OriginStub extractOriginStub(JsonArray stops) {
         JsonObject jsonObject = stops.get(0).getAsJsonObject();
         return OriginStub.builder()
                 .actualDepartureDateTime(setActualDepartureTime(jsonObject))
                 .plannedDepartureDateTime(jsonObject.get("plannedDepartureDateTime").getAsString())
                 .actualArrivalTrack(setActualTrack(jsonObject))
-                .plannedArrivalTrack(jsonObject.get("plannedArrivalTrack").getAsString())
+                .plannedArrivalTrack(setPlannedTrack(jsonObject))
                 .station(extractStation(jsonObject))
                 .build();
     }
-
 
     /**
      * Extract list of intermediate stops from jsonArray of stops
@@ -172,7 +162,6 @@ public class TravelService {
      * @param stops
      * @return List of stopStubs
      */
-
     public List<StopStub> extractAllStops(JsonArray stops) {
         List<StopStub> legList = new ArrayList<>();
         IntStream.range(1, stops.size() - 1).mapToObj(i -> stops.get(i).getAsJsonObject()).forEach(stop -> {
@@ -183,14 +172,13 @@ public class TravelService {
                         .actualDepartureDateTime(setActualDepartureTime(stop.getAsJsonObject()))
                         .plannedDepartureDateTime(stop.get("plannedDepartureDateTime").getAsString())
                         .actualArrivalTrack(setActualTrack(stop.getAsJsonObject()))
-                        .plannedArrivalTrack(stop.get("plannedArrivalTrack").getAsString())
+                        .plannedArrivalTrack(setPlannedTrack(stop.getAsJsonObject()))
                         .station(extractStation(stop.getAsJsonObject()))
                         .build();
 
                 legList.add(stopStub);
             }
         });
-
         return legList;
     }
 
@@ -200,14 +188,13 @@ public class TravelService {
      * @param stops
      * @return destinationStub
      */
-
     public DestinationStub extractDestinationStub(JsonArray stops) {
         JsonObject jsonObject = stops.get(stops.size() - 1).getAsJsonObject();
         return DestinationStub.builder()
                 .actualArrivalDateTime(setActualArrivalTime(jsonObject))
                 .plannedArrivalDateTime(jsonObject.get("plannedArrivalDateTime").getAsString())
                 .actualArrivalTrack(setActualTrack(jsonObject))
-                .plannedArrivalTrack(jsonObject.get("plannedArrivalTrack").getAsString())
+                .plannedArrivalTrack(setPlannedTrack(jsonObject))
                 .station(extractStation(jsonObject))
                 .build();
     }
@@ -219,43 +206,45 @@ public class TravelService {
      * @return
      */
     public Station extractStation(JsonObject stations) {
-
         return Station.builder()
                 .name(stations.get("name").getAsString())
                 .latitude(stations.get("lat").getAsString())
                 .longitude(stations.get("lng").getAsString())
                 .build();
-
-
     }
 
     // Helper methods
     private String setActualDepartureTime(JsonObject jsonObject) {
-
         if (jsonObject.has("actualDepartureDateTime")) {
             return jsonObject.get("actualDepartureDateTime").getAsString();
         } else {
             return jsonObject.get("plannedDepartureDateTime").getAsString();
         }
-
     }
 
     private String setActualArrivalTime(JsonObject jsonObject) {
-
         if (jsonObject.has("actualArrivalDateTime")) {
             return jsonObject.get("actualArrivalDateTime").getAsString();
         } else {
             return jsonObject.get("plannedArrivalDateTime").getAsString();
         }
-
     }
 
     private String setActualTrack(JsonObject jsonObject) {
-
         if (jsonObject.has("actualArrivalTrack")) {
             return jsonObject.get("actualArrivalTrack").getAsString();
-        } else {
+        }else if(jsonObject.has("plannedArrivalTrack")){
             return jsonObject.get("plannedArrivalTrack").getAsString();
+        }else{
+            return null;
+        }
+    }
+
+    private String setPlannedTrack(JsonObject jsonObject) {
+       if(jsonObject.has("plannedArrivalTrack")){
+            return jsonObject.get("plannedArrivalTrack").getAsString();
+        }else{
+            return null;
         }
     }
 

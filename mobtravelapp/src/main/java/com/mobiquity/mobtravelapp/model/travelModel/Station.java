@@ -2,7 +2,6 @@ package com.mobiquity.mobtravelapp.model.travelModel;
 
 import lombok.*;
 
-
 @Builder
 @Getter
 public class Station {

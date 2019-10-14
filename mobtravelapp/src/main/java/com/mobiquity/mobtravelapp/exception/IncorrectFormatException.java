@@ -6,6 +6,4 @@ public class IncorrectFormatException extends Exception{
         super(message);
     }
 
-
-
 }

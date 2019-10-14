@@ -10,34 +10,40 @@ import java.util.regex.Pattern;
 
 public class TravelValidation {
 
-
-    public static String checkInputStations(String station){
-        Boolean flag;
-        Pattern pattern=Pattern.compile("^(([A-Z])([a-z])+\\s*)+$");
-        Matcher matcher=pattern.matcher(station);
+    /**
+     * Reformat the values of station name to adhere to our format standard.
+     * Standard: Stations should start with capital letter.
+     * If a station name contains multiple words, each word should start with capital letter.
+     * @param station
+     * @return
+     */
+    public static String reformatStationName(String station){
+        Pattern pattern = Pattern.compile("^(([A-Z])([a-z])+\\s*)+$");
+        Matcher matcher = pattern.matcher(station);
         if(matcher.matches()==false){
             String[] words = station.split("\\s");
             List<String> place = new ArrayList<>();
             if (words.length == 1) {
                 String word = words[0];
                 station = Character.toUpperCase(word.charAt(0)) + word.substring(1);
-
             } else {
                 for (String word : words) {
                     word = Character.toUpperCase(word.charAt(0))+ word.substring(1);
                     place.add(word);
                 }
                 station = (place.get(0) + " " + place.get(1));
-                System.out.println(station);
             }
         }
         return station;
     }
 
-
+    /**
+     * Checks if dateTime parameter format is correct.
+     * @param dateTime
+     * @return
+     */
     public static boolean checkInputTime(String dateTime) {
         DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd'T'HH:MM:ss'Z'");
-        //sdf.setLenient();
         try{
             sdf.parse(dateTime);
         } catch (ParseException e) {
@@ -45,7 +51,6 @@ public class TravelValidation {
         }
         return true;
     }
-
 
 }
 

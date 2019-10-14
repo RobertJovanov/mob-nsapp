@@ -1,6 +1,5 @@
 package com.mobiquity.mobtravelapp.model.travelModel;
 
-import com.google.gson.JsonArray;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
