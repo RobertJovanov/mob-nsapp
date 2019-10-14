@@ -34,18 +34,18 @@ public class TravelValidation {
         return station;
     }
 
-    public static String checkInputTime(String dateTime) {
-        DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd HH:MM:ss+zzzz");
-        sdf.setLenient(false);
-        try {
+
+    public static boolean checkInputTime(String dateTime) {
+        DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd'T'HH:MM:ss'Z'");
+        //sdf.setLenient();
+        try{
             sdf.parse(dateTime);
-
-        }catch(ParseException e){
-            System.out.println(e);
+        } catch (ParseException e) {
+            return false;
         }
-
-        return dateTime;
-
+        return true;
     }
+
+
 }
 

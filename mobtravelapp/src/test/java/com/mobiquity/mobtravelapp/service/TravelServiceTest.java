@@ -2,8 +2,6 @@ package com.mobiquity.mobtravelapp.service;
 
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.model.travelModel.Route;
 import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
@@ -23,7 +21,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -39,9 +38,9 @@ public class TravelServiceTest {
     }
 
     @Test
-    public void getRoutes() {
+    public void getRoutes() throws Exception {
 
-        travelService.getRoutes(routeModel);
+        travelService.reformatRoutes(routeModel);
     }
 
     @Test
@@ -54,7 +53,7 @@ public class TravelServiceTest {
 
     @Test
     public void checkingTimeFormat() {
-        assertEquals("2019-10-09T12:30:00Z", TravelValidation.checkInputTime(routeModel.getDateTime()));
+        assertTrue(TravelValidation.checkInputTime(routeModel.getDateTime()));
     }
 
     @Test
@@ -64,20 +63,19 @@ public class TravelServiceTest {
         String jsonArray = getJsonArrayFromTestResource();
 
     }
-   /* @Test
+    @Test
 
     public void checkStationExtractionSuccessful(){
-        JsonArray jsonArray = getJsonArrayFromTestResource();
-        List<Route> expectedRoutes= travelService.extractingAllTheRoutes(jsonArray);
-        assertEquals(6,expectedRoutes.size());
-    }*/
+        String jsonArray = getJsonArrayFromTestResource();
+
+    }
 
     @Test
 
     public void checkRoutesExtractionSuccessful() {
-        String jsonArray = getJsonArrayFromTestResource();
-        JsonArray expectedRoutes = travelService.extractingAllTrips(jsonArray);
-        List<Route> routes = travelService.extractingAllRoutes(expectedRoutes);
+        String trips = getJsonArrayFromTestResource();
+        JsonArray expectedRoutes = travelService.extractAllTrips(trips);
+        List<Route> routes = travelService.extractAllRoutes(expectedRoutes);
         assertEquals(6, routes.size());
     }
 
