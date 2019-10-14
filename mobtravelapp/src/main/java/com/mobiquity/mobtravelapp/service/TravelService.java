@@ -54,6 +54,7 @@ public class TravelService {
         return trips;
     }
 
+
     public List<Route> extractingAllTheRoutes(JsonArray trips) {
         List<Route> routes = new ArrayList<>();
         AtomicInteger index = new AtomicInteger(1);
@@ -63,7 +64,7 @@ public class TravelService {
             route.setPlannedDurationInMinutes(trip.get("plannedDurationInMinutes").getAsInt());
             route.setTransfers(trip.get("transfers").getAsInt());
             route.setStatus(trip.get("status").getAsString());
-            if (trip.get("status").getAsString().equals("CANCELLED")) {
+            if (!trip.get("status").getAsString().equals("NORMAL")) {
                 System.out.println("This Route is cancelled. Do nothing");
             } else {
                 JsonArray legs = trip.getAsJsonArray("legs");
@@ -74,6 +75,13 @@ public class TravelService {
         });
         return routes;
     }
+
+    /**
+     *
+     * @param
+     * @return
+     */
+
 
     public List<Leg> extractAllTheLeg(JsonArray legs){
         List<Leg> legList=new ArrayList<>();
@@ -94,6 +102,8 @@ public class TravelService {
         }
         return legList;
     }
+
+
 
     public List<Station> extractAllStations(JsonArray stops) {
 
@@ -131,7 +141,9 @@ public class TravelService {
             }
         });
         return stationList;
+
     }
+
 
 }
 
