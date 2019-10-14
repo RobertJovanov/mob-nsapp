@@ -45,6 +45,7 @@ node {
     }
     catch (Exception e) {
         notify("The pipeline failed")
+        throw e
     }
 }
 
