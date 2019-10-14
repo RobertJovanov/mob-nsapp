@@ -35,7 +35,7 @@ public class TravelService {
 
     public Trip getRoutes(RouteModel routeModel) {
 
-        RouteModel routeModel1=RouteModel.builder().fromStation(TravelValidation.checkInputStations(routeModel.getFromStation()))
+        RouteModel routeModel1 = RouteModel.builder().fromStation(TravelValidation.checkInputStations(routeModel.getFromStation()))
                 .toStation(TravelValidation.checkInputStations(routeModel.getToStation()))
                 .dateTime(TravelValidation.checkInputTime(routeModel.getDateTime()))
                 .routeLimit(routeModel.getRouteLimit()).build();
@@ -93,7 +93,7 @@ public class TravelService {
     public List<StopStub> extractAllTheStops(JsonArray stops) {
         List<StopStub> legList = new ArrayList<>();
         IntStream.range(1, stops.size() - 1).mapToObj(i -> stops.get(i).getAsJsonObject()).forEach(stop -> {
-            if(!stop.has("passing")) {
+            if (!stop.has("passing")) {
                 StopStub stopStub = StopStub.builder()
                         .actualArrivalDateTime(toSetActualArrivalTime(stop.getAsJsonObject()))
                         .plannedArrivalDateTime(stop.get("plannedArrivalDateTime").getAsString())
@@ -111,9 +111,9 @@ public class TravelService {
         return legList;
     }
 
-    //TODO see if we need this, and check the json hier.
+
     public Station extractStation(JsonObject stations) {
-//        JsonObject jsonObject = stations.get(0).getAsJsonObject();
+
         return Station.builder()
                 .name(stations.get("name").getAsString())
                 .latitude(stations.get("lat").getAsString())
@@ -137,9 +137,9 @@ public class TravelService {
 
     private String toSetActualDepartureTime(JsonObject jsonObject) {
 
-        if(jsonObject.has("actualDepartureDateTime")){
-           return jsonObject.get("actualDepartureDateTime").getAsString();
-        }else{
+        if (jsonObject.has("actualDepartureDateTime")) {
+            return jsonObject.get("actualDepartureDateTime").getAsString();
+        } else {
             return jsonObject.get("plannedDepartureDateTime").getAsString();
         }
 
@@ -159,18 +159,18 @@ public class TravelService {
 
     private String toSetActualArrivalTime(JsonObject jsonObject) {
 
-        if(jsonObject.has("actualArrivalDateTime")){
+        if (jsonObject.has("actualArrivalDateTime")) {
             return jsonObject.get("actualArrivalDateTime").getAsString();
-        }else{
+        } else {
             return jsonObject.get("plannedArrivalDateTime").getAsString();
         }
 
     }
 
-    private String toSetActualTrack(JsonObject jsonObject){
-        if(jsonObject.has("actualArrivalTrack")){
+    private String toSetActualTrack(JsonObject jsonObject) {
+        if (jsonObject.has("actualArrivalTrack")) {
             return jsonObject.get("actualArrivalTrack").getAsString();
-        }else{
+        } else {
             return jsonObject.get("plannedArrivalTrack").getAsString();
         }
     }
@@ -179,8 +179,8 @@ public class TravelService {
     public List<Leg> extractAllLegs(JsonArray legArray) {
 
         List<Leg> legs = new ArrayList<>();
-        for(int i =0;i<legArray.size();i++){
-           JsonObject legArray1= legArray.get(i).getAsJsonObject();
+        for (int i = 0; i < legArray.size(); i++) {
+            JsonObject legArray1 = legArray.get(i).getAsJsonObject();
             Leg leg = Leg.builder()
                     .direction(legArray1.get("direction").getAsString())
                     .origin(extractOriginStub(legArray1.get("stops").getAsJsonArray()))

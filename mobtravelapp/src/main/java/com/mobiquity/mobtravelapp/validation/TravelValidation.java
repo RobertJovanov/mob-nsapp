@@ -35,7 +35,7 @@ public class TravelValidation {
     }
 
     public static String checkInputTime(String dateTime) {
-        DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd HH:MM:ssZ");
+        DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd HH:MM:ss+zzzz");
         sdf.setLenient(false);
         try {
             sdf.parse(dateTime);
