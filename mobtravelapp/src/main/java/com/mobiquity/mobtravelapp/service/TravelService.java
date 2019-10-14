@@ -72,7 +72,7 @@ public class TravelService {
         try {
             result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         } catch (RestClientException e) {
-            throw new IncorrectFormatException("Bad Request Parameters");
+            throw new IncorrectFormatException("Bad Request");
         }
         JsonArray trips = extractAllTrips(result.getBody());
         System.out.println(result.getBody());
