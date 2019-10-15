@@ -17,8 +17,8 @@ public class TravelValidation {
      * Reformat the values of station name to adhere to our format standard.
      * Standard: Stations should start with capital letter.
      * If a station name contains multiple words, each word should start with capital letter.
-     * @param station
-     * @return
+     * @param station name String
+     * @return reformatted name String
      */
     public static String reformatStationName(String station){
         Pattern pattern = Pattern.compile("^(([A-Z])([a-z])+\\s*)+$");
@@ -42,8 +42,8 @@ public class TravelValidation {
 
     /**
      * Checks if dateTime parameter format is correct.
-     * @param dateTime
-     * @return
+     * @param dateTime String
+     * @return boolean for correct format
      */
     public static boolean checkInputTime(String dateTime) {
         DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd'T'HH:MM:ss");

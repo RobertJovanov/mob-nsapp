@@ -37,9 +37,11 @@ public class TravelService {
      * Reformat the values of a RouteModel to adhere to our format standard.
      * Standard: Stations should start with capital letter.
      * If a station name contains multiple words, each word should start with capital letter.
+     * calls validation method reformatStationName and checkInputTime
      *
-     * @param routeModel
-     * @return
+     * @param routeModel routemodel from getTripFromNs for formatting
+     * @return validated routemodel to the getTripFromNs
+     * @throws Exception if if the time is not in correct format
      */
     public RouteModel reformatRoutes(RouteModel routeModel) throws Exception {
         if (!TravelValidation.checkInputTime(routeModel.getDateTime())) {
@@ -52,10 +54,13 @@ public class TravelService {
     }
 
     /**
-     * Get all the trips by making api call to ns.nl
+     * Gets all trips by making a api call to ns.nl
+     * Validates and reformats parameters
+     * Calls extractAllRoutes to get the List of Routes
      *
-     * @param routeModel
+     * @param routeModel routeModel from the controller
      * @return Trip model which has list of routes
+     * @throws Exception if request parameters for ns api are incorrect
      */
     public Trip getTripFromNs(RouteModel routeModel) throws Exception {
         RouteModel routeModelAfterReformat = reformatRoutes(routeModel);
@@ -77,15 +82,15 @@ public class TravelService {
         JsonArray trips = extractAllTrips(result.getBody());
         System.out.println(result.getBody());
 
-            return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), extractAllRoutes(trips));
-        
+        return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), extractAllRoutes(trips));
+
     }
 
     /**
      * Extracts all trips from reading the result from ns.nl
      *
-     * @param result
-     * @return trips  as jsonArray
+     * @param result a String of trips
+     * @return a JsonArray of trips
      */
     public JsonArray extractAllTrips(String result) {
         JsonObject jsonObject = new JsonParser().parse(result).getAsJsonObject();
@@ -96,7 +101,7 @@ public class TravelService {
     /**
      * Extract all routes from trips
      *
-     * @param trips
+     * @param trips a JsonArray of trips
      * @return List of Routes
      */
     public List<Route> extractAllRoutes(JsonArray trips) {
@@ -128,7 +133,7 @@ public class TravelService {
     /**
      * Extracts all legs from JsonArray of legs
      *
-     * @param legArray
+     * @param legArray a JsonArray of legs
      * @return List of legs
      */
     public List<Leg> extractAllLegs(JsonArray legArray) {
@@ -149,7 +154,7 @@ public class TravelService {
     /**
      * Extracts origin stub from JsonArray of stops
      *
-     * @param stops
+     * @param stops a JsonArray of stops
      * @return originStub
      */
     public OriginStub extractOriginStub(JsonArray stops) {
@@ -166,7 +171,7 @@ public class TravelService {
     /**
      * Extract list of intermediate stops from jsonArray of stops
      *
-     * @param stops
+     * @param stops a JsonArray of stops
      * @return List of stopStubs
      */
     public List<StopStub> extractAllStops(JsonArray stops) {
@@ -192,7 +197,7 @@ public class TravelService {
     /**
      * Extracts destination stub from JsonArray of stops
      *
-     * @param stops
+     * @param stops a JsonArray of stops
      * @return destinationStub
      */
     public DestinationStub extractDestinationStub(JsonArray stops) {
@@ -209,14 +214,14 @@ public class TravelService {
     /**
      * Extract station details from JsonObject stations
      *
-     * @param stations
-     * @return
+     * @param station a station JsonObject
+     * @return Station
      */
-    public Station extractStation(JsonObject stations) {
+    public Station extractStation(JsonObject station) {
         return Station.builder()
-                .name(stations.get("name").getAsString())
-                .latitude(stations.get("lat").getAsString())
-                .longitude(stations.get("lng").getAsString())
+                .name(station.get("name").getAsString())
+                .latitude(station.get("lat").getAsString())
+                .longitude(station.get("lng").getAsString())
                 .build();
     }
 
