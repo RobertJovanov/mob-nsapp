@@ -5,6 +5,14 @@ node {
             script: "kubectl get secrets nsapikey --template='{{ .data.NSAPIKEY }}' | base64 --decode",
             returnStdout: true
         )
+        OPENWEATHERAPIKEY = sh (
+            script: "kubectl get secrets openweatherapikey --template='{{ .data.OPENWEATHERAPIKEY }}' | base64 --decode",
+            returnStdout: true
+        )
+        DARKSKYAPIKEY = sh (
+            script: "kubectl get secrets darkskyapikey --template='{{ .data.DARKSKYAPIKEY }}' | base64 --decode",
+            returnStdout: true
+        )
     
         stage("Checkout") {
             checkout([

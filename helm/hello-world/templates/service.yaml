@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: hello-world-service
 #  annotations:
-#    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:eu-central-1:473293451041:certificate/21384dfa-83fa-4d72-b10a-b42d62b3cf00
+#    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:iam::473293451041:server-certificate/mob-nsapp-certificate
 #    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
 #    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
   labels:

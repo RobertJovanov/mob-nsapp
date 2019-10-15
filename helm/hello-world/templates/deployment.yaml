@@ -24,6 +24,11 @@ spec:
               secretKeyRef:
                 name: nsapikey
                 key: NSAPIKEY
+          - name: DARKSKYAPIKEY
+            valueFrom:
+              secretKeyRef:
+                name: darkskyapikey
+                key: DARKSKYAPIKEY
           - name: OPENWEATHERAPIKEY
             valueFrom:
               secretKeyRef:
