@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import static org.junit.Assert.assertNotNull;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class WeatherServiceTest {
@@ -25,7 +27,7 @@ public class WeatherServiceTest {
     }
     @Test
     public void checkIfApiCallIsSuccessful(){
-        weatherService.getWeather(station,"2019-10-15T10:26:00+0200");
+        assertNotNull(weatherService.getWeather(station,"2019-10-15T10:26:00+0200"));
     }
 
 }

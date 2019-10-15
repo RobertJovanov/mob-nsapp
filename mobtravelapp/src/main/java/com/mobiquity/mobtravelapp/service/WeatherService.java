@@ -3,9 +3,6 @@ package com.mobiquity.mobtravelapp.service;
 
 import com.mobiquity.mobtravelapp.model.travelModel.Station;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,12 +15,13 @@ public class WeatherService {
 
     final String key = System.getenv("DARKSKYAPIKEY");
 
-    public void getWeather(Station station, String dateTime) {
+    public String getWeather(Station station, String dateTime) {
         String url = MessageFormat.format(uri, key, station.getLatitude(), station.getLongitude(), dateTime);
         System.out.println(url);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
         System.out.println(responseEntity.getBody());
+        return  responseEntity.getBody();
     }
 
 }
