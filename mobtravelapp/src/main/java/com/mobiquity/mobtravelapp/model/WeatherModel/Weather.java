@@ -1,14 +1,22 @@
 package com.mobiquity.mobtravelapp.model.WeatherModel;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
-
-@Builder
+@JsonIgnoreProperties
 @Getter
 public class Weather {
-    private String summary;
-    private double temperature;
-    private double apparentTemperature;
-    private double humidity;
-    private double speed;
+    private Currently currently;
+
+    @JsonIgnoreProperties
+    @Getter
+    public class Currently {
+        private String summary;
+        private double temperature;
+        private double apparentTemperature;
+        private double humidity;
+        private double windSpeed;
+    }
 }
+
+

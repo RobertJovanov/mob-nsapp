@@ -16,13 +16,14 @@ public class WeatherService {
 
     final String key = System.getenv("DARKSKYAPIKEY");
 
-    public String getWeather(Station station, String dateTime) {
+    public Weather getWeather(Station station, String dateTime) {
         String url = MessageFormat.format(uri, key, station.getLatitude(), station.getLongitude(), dateTime);
         System.out.println(url);
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
-        System.out.println(responseEntity.getBody());
-        return  responseEntity.getBody();
+        ResponseEntity<Weather> responseEntity = restTemplate.getForEntity(url, Weather.class);
+        Weather.Currently currently = responseEntity.getBody().getCurrently();
+        System.out.println(currently.getSummary());
+        return responseEntity.getBody();
     }
 
 }
