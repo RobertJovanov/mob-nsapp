@@ -28,8 +28,8 @@ public class TravelService {
 
     private final Logger logger = LoggerFactory.getLogger(TravelService.class);
 
-    @Value("${ns.nl.api.url}")
-    private String uri;
+    //@Value("${api.ns.nl.url}")
+    private String uri="https://gateway.apiportal.ns.nl/public-reisinformatie/api/v3/trips?{0}&{1}&{2}";
 
     final String key = System.getenv("NSAPIKEY");
 
@@ -158,6 +158,7 @@ public class TravelService {
      * @return originStub
      */
     public OriginStub extractOriginStub(JsonArray stops) {
+       WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(0).getAsJsonObject();
         return OriginStub.builder()
                 .actualDepartureDateTime(setActualDepartureTime(jsonObject))
@@ -165,6 +166,7 @@ public class TravelService {
                 .actualArrivalTrack(setActualTrack(jsonObject))
                 .plannedArrivalTrack(setPlannedTrack(jsonObject))
                 .station(extractStation(jsonObject))
+                .weather(weatherService.getWeather(extractStation(jsonObject), jsonObject.get("plannedDepartureDateTime").getAsString()))
                 .build();
     }
 
@@ -197,10 +199,11 @@ public class TravelService {
     /**
      * Extracts destination stub from JsonArray of stops
      *
-     * @param stops a JsonArray of stops
+     * @param stops
      * @return destinationStub
      */
     public DestinationStub extractDestinationStub(JsonArray stops) {
+        WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(stops.size() - 1).getAsJsonObject();
         return DestinationStub.builder()
                 .actualArrivalDateTime(setActualArrivalTime(jsonObject))
@@ -208,20 +211,21 @@ public class TravelService {
                 .actualArrivalTrack(setActualTrack(jsonObject))
                 .plannedArrivalTrack(setPlannedTrack(jsonObject))
                 .station(extractStation(jsonObject))
+                .weather(weatherService.getWeather(extractStation(jsonObject), jsonObject.get("plannedArrivalDateTime").getAsString()))
                 .build();
     }
 
     /**
      * Extract station details from JsonObject stations
      *
-     * @param station a station JsonObject
-     * @return Station
+     * @param stations
+     * @return
      */
-    public Station extractStation(JsonObject station) {
+    public Station extractStation(JsonObject stations) {
         return Station.builder()
-                .name(station.get("name").getAsString())
-                .latitude(station.get("lat").getAsString())
-                .longitude(station.get("lng").getAsString())
+                .name(stations.get("name").getAsString())
+                .latitude(stations.get("lat").getAsString())
+                .longitude(stations.get("lng").getAsString())
                 .build();
     }
 
