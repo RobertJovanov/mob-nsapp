@@ -31,7 +31,7 @@ public class TravelServiceTest {
 
     @Spy
     private final TravelService travelService = new TravelService();
-    RouteModel routeModel = RouteModel.builder().fromStation("Amsterdam Zuid").toStation("duivendrecht").dateTime("2019-10-09T12:30:00Z").routeLimit(0).build();
+    RouteModel routeModel = RouteModel.builder().fromStation("Amsterdam Zuid").toStation("Duivendrecht").dateTime("2019-10-09T12:30:00").build();
 
     @Before
     public void setUp() {

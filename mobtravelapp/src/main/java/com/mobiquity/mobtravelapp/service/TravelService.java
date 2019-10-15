@@ -43,12 +43,12 @@ public class TravelService {
      */
     public RouteModel reformatRoutes(RouteModel routeModel) throws Exception {
         if (!TravelValidation.checkInputTime(routeModel.getDateTime())) {
-            throw new IncorrectFormatException("Date Time should be formatted as: yyyy-mm-dd'T'HH:MM:ss'Z'");
+            throw new IncorrectFormatException("Date Time should be formatted as: yyyy-mm-dd'T'HH:MM:ss");
         }
         return RouteModel.builder().fromStation(TravelValidation.reformatStationName(routeModel.getFromStation()))
                 .toStation(TravelValidation.reformatStationName(routeModel.getToStation()))
                 .dateTime(routeModel.getDateTime())
-                .routeLimit(routeModel.getRouteLimit()).build();
+                .build();
     }
 
     /**
@@ -76,7 +76,9 @@ public class TravelService {
         }
         JsonArray trips = extractAllTrips(result.getBody());
         System.out.println(result.getBody());
-        return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), extractAllRoutes(trips));
+
+            return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), extractAllRoutes(trips));
+        
     }
 
     /**

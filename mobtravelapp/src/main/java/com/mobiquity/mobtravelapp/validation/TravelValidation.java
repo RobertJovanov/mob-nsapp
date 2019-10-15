@@ -3,6 +3,9 @@ package com.mobiquity.mobtravelapp.validation;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -43,7 +46,7 @@ public class TravelValidation {
      * @return
      */
     public static boolean checkInputTime(String dateTime) {
-        DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd'T'HH:MM:ss'Z'");
+        DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd'T'HH:MM:ss");
         try{
             sdf.parse(dateTime);
         } catch (ParseException e) {
