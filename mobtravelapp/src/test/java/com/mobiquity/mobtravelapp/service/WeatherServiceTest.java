@@ -24,7 +24,7 @@ public class WeatherServiceTest {
     public void setUp() {
         ReflectionTestUtils.setField(weatherService, "uri", "https://api.darksky.net/forecast/{0}/{1},{2},{3}");
         ReflectionTestUtils.setField(weatherService, "key", System.getenv("DARKSKYAPIKEY"));
-    }
+}
     @Test
     public void checkIfApiCallIsSuccessful(){
         assertNotNull(weatherService.getWeather(station,"2019-10-15T10:26:00+0200"));
