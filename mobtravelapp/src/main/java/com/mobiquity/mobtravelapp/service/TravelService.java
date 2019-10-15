@@ -39,9 +39,9 @@ public class TravelService {
      * If a station name contains multiple words, each word should start with capital letter.
      * calls validation method reformatStationName and checkInputTime
      *
-     * @param routeModel routemodel from getTripFromNs for formatting
-     * @return validated routemodel to the getTripFromNs
-     * @throws Exception if if the time is not in correct format
+     * @param routeModel from getTripFromNs
+     * @return reformated routemodel
+     * @throws Exception if the time is not in correct format
      */
     public RouteModel reformatRoutes(RouteModel routeModel) throws Exception {
         if (!TravelValidation.checkInputTime(routeModel.getDateTime())) {
@@ -58,7 +58,7 @@ public class TravelService {
      * Validates and reformats parameters
      * Calls extractAllRoutes to get the List of Routes
      *
-     * @param routeModel routeModel from the controller
+     * @param routeModel from the controller
      * @return Trip model which has list of routes
      * @throws Exception if request parameters for ns api are incorrect
      */
