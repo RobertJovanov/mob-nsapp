@@ -9,6 +9,7 @@ import com.mobiquity.mobtravelapp.model.travelModel.*;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,10 +27,12 @@ import java.util.stream.IntStream;
 
 @Service
 public class TravelService {
+    @Autowired
+    WeatherService weatherService;
 
     private final Logger logger = LoggerFactory.getLogger(TravelService.class);
 
-    @Value("${ns.nl.api.url}")
+    @Value("${api.ns.nl.url}")
     private String uri;
 
     final String key = System.getenv("NSAPIKEY");
@@ -159,7 +162,7 @@ public class TravelService {
      * @return originStub
      */
     public OriginStub extractOriginStub(JsonArray stops) {
-        WeatherService weatherService = new WeatherService();
+        //WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(0).getAsJsonObject();
         return OriginStub.builder()
                 .actualDepartureDateTime(setActualDepartureTime(jsonObject))
@@ -204,7 +207,7 @@ public class TravelService {
      * @return destinationStub
      */
     public DestinationStub extractDestinationStub(JsonArray stops) {
-        WeatherService weatherService = new WeatherService();
+       // WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(stops.size() - 1).getAsJsonObject();
         return DestinationStub.builder()
                 .actualArrivalDateTime(setActualArrivalTime(jsonObject))

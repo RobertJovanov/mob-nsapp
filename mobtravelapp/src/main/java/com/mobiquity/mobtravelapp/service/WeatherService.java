@@ -5,14 +5,16 @@ import com.mobiquity.mobtravelapp.model.WeatherModel.Weather;
 import com.mobiquity.mobtravelapp.model.travelModel.Station;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.MessageFormat;
-
+@Service
 public class WeatherService {
 
-    //@Value("${darksky.net.api.url}")
-    private String uri = "https://api.darksky.net/forecast/{0}/{1},{2},{3}";
+    @Value("${api.darksky.net.url}")
+    private String uri;
+
 
     final String key = System.getenv("DARKSKYAPIKEY");
 
