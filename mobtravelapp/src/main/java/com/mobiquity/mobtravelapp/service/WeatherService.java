@@ -12,11 +12,10 @@ import java.text.MessageFormat;
 @Service
 public class WeatherService {
 
-    @Value("${api.darksky.net.url}")
-    private String uri;
-
-
+    //@Value("${api.darksky.net.url}")
+    private String uri="https://api.darksky.net/forecast/{0}/{1},{2},{3}";
     final String key = System.getenv("DARKSKYAPIKEY");
+
 
     public Weather getWeather(Station station, String dateTime) {
         String url = MessageFormat.format(uri, key, station.getLatitude(), station.getLongitude(), dateTime);
