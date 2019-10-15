@@ -1,5 +1,4 @@
 package com.mobiquity.mobtravelapp.model.travelModel;
-
 import com.mobiquity.mobtravelapp.model.WeatherModel.Weather;
 import lombok.Builder;
 import lombok.Getter;

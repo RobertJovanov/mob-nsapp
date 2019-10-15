@@ -10,5 +10,5 @@ public class Weather {
     private double temperature;
     private double apparentTemperature;
     private double humidity;
-    private double speed;
+    private double windSpeed;
 }
