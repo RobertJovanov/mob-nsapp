@@ -60,7 +60,7 @@ public class TravelServiceTest {
     @Disabled
     @Test
     public void getRoutes() throws Exception {
-        travelService.getTripFromNs(routeModel);
+        assertNotNull(travelService.getTripFromNs(routeModel));
     }
 
     @Test

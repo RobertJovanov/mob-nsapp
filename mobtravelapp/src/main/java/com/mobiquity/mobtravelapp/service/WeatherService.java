@@ -1,6 +1,7 @@
 package com.mobiquity.mobtravelapp.service;
 
 
+import com.mobiquity.mobtravelapp.model.WeatherModel.Weather;
 import com.mobiquity.mobtravelapp.model.travelModel.Station;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
