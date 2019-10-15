@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
+import com.mobiquity.mobtravelapp.model.WeatherModel.Weather;
 import com.mobiquity.mobtravelapp.model.travelModel.*;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
 import org.slf4j.Logger;
@@ -151,6 +152,7 @@ public class TravelService {
      * @return originStub
      */
     public OriginStub extractOriginStub(JsonArray stops) {
+        WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(0).getAsJsonObject();
         return OriginStub.builder()
                 .actualDepartureDateTime(setActualDepartureTime(jsonObject))
@@ -158,6 +160,7 @@ public class TravelService {
                 .actualArrivalTrack(setActualTrack(jsonObject))
                 .plannedArrivalTrack(setPlannedTrack(jsonObject))
                 .station(extractStation(jsonObject))
+                .weather(weatherService.getWeather(extractStation(jsonObject), jsonObject.get("plannedDepartureDateTime").getAsString()))
                 .build();
     }
 
@@ -194,6 +197,7 @@ public class TravelService {
      * @return destinationStub
      */
     public DestinationStub extractDestinationStub(JsonArray stops) {
+        WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(stops.size() - 1).getAsJsonObject();
         return DestinationStub.builder()
                 .actualArrivalDateTime(setActualArrivalTime(jsonObject))
@@ -201,6 +205,7 @@ public class TravelService {
                 .actualArrivalTrack(setActualTrack(jsonObject))
                 .plannedArrivalTrack(setPlannedTrack(jsonObject))
                 .station(extractStation(jsonObject))
+                .weather(weatherService.getWeather(extractStation(jsonObject), jsonObject.get("plannedArrivalDateTime").getAsString()))
                 .build();
     }
 

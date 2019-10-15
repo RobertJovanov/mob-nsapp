@@ -11,18 +11,15 @@ import java.text.MessageFormat;
 
 public class WeatherService {
 
-    @Value("${darksky.net.api.url}")
-    private String uri;
+    //@Value("${darksky.net.api.url}")
+    private String uri = "https://api.darksky.net/forecast/{0}/{1},{2},{3}";
 
     final String key = System.getenv("DARKSKYAPIKEY");
 
     public Weather getWeather(Station station, String dateTime) {
         String url = MessageFormat.format(uri, key, station.getLatitude(), station.getLongitude(), dateTime);
-        System.out.println(url);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Weather> responseEntity = restTemplate.getForEntity(url, Weather.class);
-        Weather.Currently currently = responseEntity.getBody().getCurrently();
-        System.out.println(currently.getSummary());
         return responseEntity.getBody();
     }
 
