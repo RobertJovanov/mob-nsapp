@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-deployment
+  labels:
+    app: hello-world
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      name: hello-world-pod
+      labels:
+        app: hello-world
+    spec:
+      containers:
+      - name: hello-world-container
+        image: nginx:1.17-alpine
+        env:
+          - name: NSAPIKEY
+            valueFrom:
+              secretKeyRef:
+                name: nsapikey
+                key: NSAPIKEY
+          - name: OPENWEATHERAPIKEY
+            valueFrom:
+              secretKeyRef:
+                name: openweatherapikey
+                key: OPENWEATHERAPIKEY
