@@ -27,7 +27,7 @@ public class WeatherServiceTest {
     }
 
     @Test
-    public void checkIfApiCallIsSuccessful() {
+    public void checkIfApiCallIsSuccessful()  throws  Exception{
         assertNotNull(weatherService.getWeather(station, "2019-10-15T10:26:00+0200"));
     }
 
