@@ -81,7 +81,7 @@ public class TravelServiceTest {
 
     @Test
     @DisplayName("legTest resource contains two legs which we should extract")
-    public void checkIfLegExtractionIsSuccessful() {
+    public void checkIfLegExtractionIsSuccessful() throws Exception {
         JsonObject jsonObject = new JsonParser().parse(getJsonArrayFromLegTestResource()).getAsJsonObject();
         JsonArray leg = jsonObject.getAsJsonArray("legs");
         assertEquals(2, travelService.extractAllLegs(leg).size());
