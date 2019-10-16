@@ -20,7 +20,7 @@ public class WeatherService {
      * Extracts weather for Origin and Destination stations,
      * via a call to DarkSky API
      *
-     * @param station details latitude and longitude
+     * @param station  details latitude and longitude
      * @param dateTime current date and time
      * @return Weather object
      */
