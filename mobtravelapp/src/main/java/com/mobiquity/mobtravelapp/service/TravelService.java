@@ -198,8 +198,8 @@ public class TravelService {
     /**
      * Extracts destination stub from JsonArray of stops
      *
-     * @param stops
-     * @return destinationStub
+     * @param stops a JsonArray of stops
+     * @return destinationStub  Details
      */
     public DestinationStub extractDestinationStub(JsonArray stops) {
         WeatherService weatherService = new WeatherService();
@@ -217,8 +217,8 @@ public class TravelService {
     /**
      * Extract station details from JsonObject stations
      *
-     * @param stations
-     * @return
+     * @param stations JsonObject
+     * @return Station object
      */
     public Station extractStation(JsonObject stations) {
         return Station.builder()
