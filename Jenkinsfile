@@ -27,7 +27,11 @@ node {
     
         stage("Build") {
             dir('mobtravelapp') {
-                withEnv(["NSAPIKEY=${NSAPIKEY}"]) {
+                withEnv([
+                    "NSAPIKEY=${NSAPIKEY}",
+                    "OPENWEATHERAPIKEY=${OPENWEATHERAPIKEY}",
+                    "DARKSKYAPIKEY=${DARKSKYAPIKEY}"
+                ]) {
                     sh 'mvn clean package'
                     archiveArtifacts 'target/mobtravelapp-0.0.1-SNAPSHOT.jar'
                 }
