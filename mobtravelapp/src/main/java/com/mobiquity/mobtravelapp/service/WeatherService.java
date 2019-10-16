@@ -8,17 +8,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.MessageFormat;
+
 @Service
 public class WeatherService {
 
     //@Value("${api.darksky.net.url}")
-    private String uri="https://api.darksky.net/forecast/{0}/{1},{2},{3}";
+    private String uri = "https://api.darksky.net/forecast/{0}/{1},{2},{3}";
     final String key = System.getenv("DARKSKYAPIKEY");
 
     /**
      * Extracts weather for Origin and Destination stations,
      * via a call to DarkSky API
-     * @param station station details latitude and longitude
+     *
+     * @param station  station details latitude and longitude
      * @param dateTime
      * @return Weather object
      */
