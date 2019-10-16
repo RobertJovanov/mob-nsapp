@@ -27,7 +27,6 @@ public class TravelService {
 
     private final Logger logger = LoggerFactory.getLogger(TravelService.class);
 
-    //@Value("${api.ns.nl.url}")
     private String uri = "https://gateway.apiportal.ns.nl/public-reisinformatie/api/v3/trips?{0}&{1}&{2}";
 
     final String key = System.getenv("NSAPIKEY");
