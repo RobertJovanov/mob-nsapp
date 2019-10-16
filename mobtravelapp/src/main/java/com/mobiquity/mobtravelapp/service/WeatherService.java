@@ -16,12 +16,12 @@ public class WeatherService {
     final String key = System.getenv("DARKSKYAPIKEY");
 
     /**
-     * Extract weather for Origin and Destination station
-     * @param station
+     * Extracts weather for Origin and Destination stations,
+     * via a call to DarkSky API
+     * @param station station details latitude and longitude
      * @param dateTime
-     * @return
+     * @return Weather object
      */
-
     public Weather getWeather(Station station, String dateTime) {
         String url = MessageFormat.format(uri, key, station.getLatitude(), station.getLongitude(), dateTime);
         RestTemplate restTemplate = new RestTemplate();
