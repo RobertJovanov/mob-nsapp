@@ -8,7 +8,6 @@ import com.mobiquity.mobtravelapp.model.travelModel.*;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,8 +27,7 @@ public class TravelService {
 
     private final Logger logger = LoggerFactory.getLogger(TravelService.class);
 
-    //@Value("${api.ns.nl.url}")
-    private String uri="https://gateway.apiportal.ns.nl/public-reisinformatie/api/v3/trips?{0}&{1}&{2}";
+    private String uri = "https://gateway.apiportal.ns.nl/public-reisinformatie/api/v3/trips?{0}&{1}&{2}";
 
     final String key = System.getenv("NSAPIKEY");
 
@@ -116,13 +114,18 @@ public class TravelService {
 
                 routes.add(route);
             } else {
-                Route route = Route.builder()
-                        .index(index.getAndIncrement())
-                        .plannedDurationInMinutes(trip.get("plannedDurationInMinutes").getAsInt())
-                        .transfers(trip.get("transfers").getAsInt())
-                        .status(trip.get("status").getAsString())
-                        .legs(extractAllLegs(trip.get("legs").getAsJsonArray()))
-                        .build();
+                Route route = null;
+                try {
+                    route = Route.builder()
+                            .index(index.getAndIncrement())
+                            .plannedDurationInMinutes(trip.get("plannedDurationInMinutes").getAsInt())
+                            .transfers(trip.get("transfers").getAsInt())
+                            .status(trip.get("status").getAsString())
+                            .legs(extractAllLegs(trip.get("legs").getAsJsonArray()))
+                            .build();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 routes.add(route);
             }
@@ -136,7 +139,7 @@ public class TravelService {
      * @param legArray a JsonArray of legs
      * @return List of legs
      */
-    public List<Leg> extractAllLegs(JsonArray legArray) {
+    public List<Leg> extractAllLegs(JsonArray legArray) throws Exception {
         List<Leg> legs = new ArrayList<>();
         for (int i = 0; i < legArray.size(); i++) {
             JsonObject legAsJsonObject = legArray.get(i).getAsJsonObject();
@@ -157,7 +160,7 @@ public class TravelService {
      * @param stops a JsonArray of stops
      * @return originStub
      */
-    public OriginStub extractOriginStub(JsonArray stops) {
+    public OriginStub extractOriginStub(JsonArray stops) throws Exception {
        WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(0).getAsJsonObject();
         return OriginStub.builder()
@@ -199,10 +202,10 @@ public class TravelService {
     /**
      * Extracts destination stub from JsonArray of stops
      *
-     * @param stops
-     * @return destinationStub
+     * @param stops a JsonArray of stops
+     * @return destinationStub  Details
      */
-    public DestinationStub extractDestinationStub(JsonArray stops) {
+    public DestinationStub extractDestinationStub(JsonArray stops) throws Exception {
         WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(stops.size() - 1).getAsJsonObject();
         return DestinationStub.builder()
@@ -218,8 +221,8 @@ public class TravelService {
     /**
      * Extract station details from JsonObject stations
      *
-     * @param stations
-     * @return
+     * @param stations JsonObject
+     * @return Station object
      */
     public Station extractStation(JsonObject stations) {
         return Station.builder()

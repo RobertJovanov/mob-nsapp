@@ -3,9 +3,6 @@ package com.mobiquity.mobtravelapp.validation;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,13 +14,14 @@ public class TravelValidation {
      * Reformat the values of station name to adhere to our format standard.
      * Standard: Stations should start with capital letter.
      * If a station name contains multiple words, each word should start with capital letter.
+     *
      * @param station name String
      * @return reformatted name String
      */
-    public static String reformatStationName(String station){
+    public static String reformatStationName(String station) {
         Pattern pattern = Pattern.compile("^(([A-Z])([a-z])+\\s*)+$");
         Matcher matcher = pattern.matcher(station);
-        if(matcher.matches()==false){
+        if (matcher.matches() == false) {
             String[] words = station.split("\\s");
             List<String> place = new ArrayList<>();
             if (words.length == 1) {
@@ -31,7 +29,7 @@ public class TravelValidation {
                 station = Character.toUpperCase(word.charAt(0)) + word.substring(1);
             } else {
                 for (String word : words) {
-                    word = Character.toUpperCase(word.charAt(0))+ word.substring(1);
+                    word = Character.toUpperCase(word.charAt(0)) + word.substring(1);
                     place.add(word);
                 }
                 station = (place.get(0) + " " + place.get(1));
@@ -42,12 +40,13 @@ public class TravelValidation {
 
     /**
      * Checks if dateTime parameter format is correct.
+     *
      * @param dateTime String
      * @return boolean for correct format
      */
     public static boolean checkInputTime(String dateTime) {
         DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd'T'HH:MM:ss");
-        try{
+        try {
             sdf.parse(dateTime);
         } catch (ParseException e) {
             return false;

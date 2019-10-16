@@ -8,7 +8,6 @@ import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
@@ -22,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -52,11 +52,10 @@ public class TravelServiceTest {
     }
 
     @Test
-    public void checkTimeFormatIncorrectFormat(){
+    public void checkTimeFormatIncorrectFormat() {
         assertFalse(TravelValidation.checkInputTime("noon"));
     }
 
-    @Disabled
     @Test
     public void getRoutes() throws Exception {
         assertNotNull(travelService.getTripFromNs(routeModel));
@@ -82,7 +81,7 @@ public class TravelServiceTest {
 
     @Test
     @DisplayName("legTest resource contains two legs which we should extract")
-    public void checkIfLegExtractionIsSuccessful() {
+    public void checkIfLegExtractionIsSuccessful() throws Exception {
         JsonObject jsonObject = new JsonParser().parse(getJsonArrayFromLegTestResource()).getAsJsonObject();
         JsonArray leg = jsonObject.getAsJsonArray("legs");
         assertEquals(2, travelService.extractAllLegs(leg).size());
