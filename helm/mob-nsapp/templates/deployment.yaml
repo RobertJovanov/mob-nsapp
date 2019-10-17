@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mob-nsapp-deployment
+  labels:
+    app: mob-nsapp
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: mob-nsapp
+  template:
+    metadata:
+      name: mob-nsapp-pod
+      labels:
+        app: mob-nsapp
+    spec:
+      containers:
+      - name: mob-nsapp-container
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        env:
+          - name: NSAPIKEY
+            valueFrom:
+              secretKeyRef:
+                name: nsapikey
+                key: NSAPIKEY
+          - name: DARKSKYAPIKEY
+            valueFrom:
+              secretKeyRef:
+                name: darkskyapikey
+                key: DARKSKYAPIKEY
+          - name: OPENWEATHERAPIKEY
+            valueFrom:
+              secretKeyRef:
+                name: openweatherapikey
+                key: OPENWEATHERAPIKEY

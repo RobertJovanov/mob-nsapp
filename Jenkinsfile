@@ -52,7 +52,9 @@ node {
     
         stage("Deploy to EKS") {
             sh "helm lint --strict ./helm/hello-world/"
+            sh "helm lint --strict ./helm/mob-nsapp/"
             sh "helm upgrade --install hello-world ./helm/hello-world/"
+            sh "helm upgrade --install mob-nsapp ./helm/mob-nsapp/"
         }
     }
     catch (Exception e) {
