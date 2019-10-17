@@ -10,14 +10,16 @@ import com.mobiquity.mobtravelapp.model.travelModel.Route;
 import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
 import com.mobiquity.mobtravelapp.model.travelModel.Station;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
-import io.swagger.models.auth.In;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -33,6 +35,7 @@ import java.util.stream.Stream;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
+//@RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
 public class TravelServiceTest {
 
@@ -42,19 +45,25 @@ public class TravelServiceTest {
     @Mock
     private final WeatherService weatherService = new WeatherService();
 
+    @Mock
+    private final NsService nsService = new NsService();
+
     @Value("${api.ns.nl.url}")
     private String nsNlUri;
 
     @Value("${api.ns.nl.key}")
     private String nsNlKey;
+    RouteModel routeModel = new RouteModel("Amsterdam Zuid", "Duivendrecht", "2019-10-09T12:30:00");
 
-    RouteModel routeModel = new RouteModel("Amsterdam Zuid","Duivendrecht","2019-10-09T12:30:00");
 
     @Before
-    public void setUp() throws WeatherException {
-        ReflectionTestUtils.setField(travelService, "uri", nsNlUri);
-        ReflectionTestUtils.setField(travelService, "key", nsNlKey);
+    public void setUp() throws WeatherException, IncorrectFormatException {
+
+//        ReflectionTestUtils.setField(travelService, "uri", nsNlUri);
+//        ReflectionTestUtils.setField(travelService, "key", nsNlKey);
+        Mockito.when(nsService.getNsTrips(new RouteModel())).thenReturn(getJsonArrayFromTestResource());
         Mockito.when(weatherService.getWeather(Station.builder().build(), "2019-10-09T12:30:00Z")).thenReturn(new Weather());
+
     }
 
     @Test

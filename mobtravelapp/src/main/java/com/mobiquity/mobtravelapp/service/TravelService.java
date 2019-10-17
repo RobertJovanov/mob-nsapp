@@ -11,15 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,13 +24,16 @@ public class TravelService {
     private final Logger logger = LoggerFactory.getLogger(TravelService.class);
 
     @Value("${api.ns.nl.url}")
-    private  String uri;
+    private String uri;
 
     @Value("${api.ns.nl.key}")
     private String key;
-    
+
     @Autowired
     private WeatherService weatherService;
+
+    @Autowired
+    private NsService nsService;
 
 
     /**
@@ -53,8 +49,8 @@ public class TravelService {
         if (!TravelValidation.checkInputTime(routeModel.getDateTime())) {
             throw new IncorrectFormatException("Date Time should be formatted as: yyyy-mm-dd'T'HH:MM:ss");
         }
-        return new RouteModel(TravelValidation.reformatStationName(routeModel.getFromStation()),TravelValidation.reformatStationName(routeModel.getToStation())
-                ,routeModel.getDateTime());
+        return new RouteModel(TravelValidation.reformatStationName(routeModel.getFromStation()), TravelValidation.reformatStationName(routeModel.getToStation())
+                , routeModel.getDateTime());
     }
 
     /**
@@ -68,24 +64,8 @@ public class TravelService {
      */
     public Trip getTripFromNs(RouteModel routeModel) throws IncorrectFormatException {
         RouteModel routeModelAfterReformat = reformatRoutes(routeModel);
-        String url = MessageFormat.format(uri, "fromStation=" + routeModelAfterReformat.getFromStation(),
-                "toStation=" + routeModelAfterReformat.getToStation(), "dateTime=" + routeModelAfterReformat.getDateTime());
-        logger.info(url);
-
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Ocp-Apim-Subscription-Key", System.getenv(this.key));
-
-        HttpEntity<String> entity = new HttpEntity<String>(httpHeaders);
-        ResponseEntity<String> result;
-        try {
-            result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-        } catch (RestClientException e) {
-            throw new IncorrectFormatException("Bad Request");
-        }
-        JsonArray trips = extractAllTrips(result.getBody());
-        System.out.println(result.getBody());
-
+        String result = nsService.getNsTrips(routeModelAfterReformat);
+        JsonArray trips = extractAllTrips(result);
         return new Trip(routeModelAfterReformat.getFromStation(), routeModelAfterReformat.getToStation(), routeModelAfterReformat.getDateTime(), extractAllRoutes(trips));
 
     }
@@ -120,15 +100,15 @@ public class TravelService {
 
                 routes.add(route);
             } else {
-                Route  route = null;
+                Route route = null;
                 try {
                     route = Route.builder()
-                                .index(index.getAndIncrement())
-                                .plannedDurationInMinutes(trip.get("plannedDurationInMinutes").getAsInt())
-                                .transfers(trip.get("transfers").getAsInt())
-                                .status(trip.get("status").getAsString())
-                                .legs(extractAllLegs(trip.get("legs").getAsJsonArray()))
-                                .build();
+                            .index(index.getAndIncrement())
+                            .plannedDurationInMinutes(trip.get("plannedDurationInMinutes").getAsInt())
+                            .transfers(trip.get("transfers").getAsInt())
+                            .status(trip.get("status").getAsString())
+                            .legs(extractAllLegs(trip.get("legs").getAsJsonArray()))
+                            .build();
                 } catch (WeatherException e) {
                     e.printStackTrace();
                 }
