@@ -2,6 +2,8 @@ package com.mobiquity.mobtravelapp.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
+import com.mobiquity.mobtravelapp.exception.WeatherException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +35,7 @@ public class TravelControllerIT {
     TravelController travelController;
 
     @Before
-    public void setup() throws Exception {
+    public void setup()  {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 

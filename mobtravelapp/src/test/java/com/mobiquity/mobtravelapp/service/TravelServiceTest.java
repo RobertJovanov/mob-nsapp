@@ -3,11 +3,14 @@ package com.mobiquity.mobtravelapp.service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
+import com.mobiquity.mobtravelapp.exception.WeatherException;
 import com.mobiquity.mobtravelapp.model.WeatherModel.Weather;
 import com.mobiquity.mobtravelapp.model.travelModel.Route;
 import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
 import com.mobiquity.mobtravelapp.model.travelModel.Station;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
+import io.swagger.models.auth.In;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +51,7 @@ public class TravelServiceTest {
     RouteModel routeModel = new RouteModel("Amsterdam Zuid","Duivendrecht","2019-10-09T12:30:00");
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws WeatherException {
         ReflectionTestUtils.setField(travelService, "uri", nsNlUri);
         ReflectionTestUtils.setField(travelService, "key", nsNlKey);
         Mockito.when(weatherService.getWeather(Station.builder().build(), "2019-10-09T12:30:00Z")).thenReturn(new Weather());
@@ -73,7 +76,7 @@ public class TravelServiceTest {
     }
 
     @Test
-    public void getRoutes() throws Exception {
+    public void getRoutes() throws IncorrectFormatException {
         assertNotNull(travelService.getTripFromNs(routeModel));
     }
 
