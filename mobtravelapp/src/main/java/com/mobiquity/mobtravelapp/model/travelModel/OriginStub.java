@@ -12,6 +12,5 @@ public class OriginStub {
     private final String actualArrivalTrack;
     private final Station station;
     private final Weather weather;
-
 }
 

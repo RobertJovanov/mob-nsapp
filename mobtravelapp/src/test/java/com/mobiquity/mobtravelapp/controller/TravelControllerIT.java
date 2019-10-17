@@ -2,8 +2,6 @@ package com.mobiquity.mobtravelapp.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
-import com.mobiquity.mobtravelapp.exception.WeatherException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

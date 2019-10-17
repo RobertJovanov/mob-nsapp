@@ -22,6 +22,7 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -33,9 +34,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-//@RunWith(MockitoJUnitRunner.class)
+//@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
 public class TravelServiceTest {
 
@@ -48,23 +51,7 @@ public class TravelServiceTest {
     @Mock
     private final NsService nsService = new NsService();
 
-    @Value("${api.ns.nl.url}")
-    private String nsNlUri;
-
-    @Value("${api.ns.nl.key}")
-    private String nsNlKey;
     RouteModel routeModel = new RouteModel("Amsterdam Zuid", "Duivendrecht", "2019-10-09T12:30:00");
-
-
-    @Before
-    public void setUp() throws WeatherException, IncorrectFormatException {
-
-//        ReflectionTestUtils.setField(travelService, "uri", nsNlUri);
-//        ReflectionTestUtils.setField(travelService, "key", nsNlKey);
-        Mockito.when(nsService.getNsTrips(new RouteModel())).thenReturn(getJsonArrayFromTestResource());
-        Mockito.when(weatherService.getWeather(Station.builder().build(), "2019-10-09T12:30:00Z")).thenReturn(new Weather());
-
-    }
 
     @Test
     public void checkIfInputIsCaseInsensitive() {
@@ -85,7 +72,9 @@ public class TravelServiceTest {
     }
 
     @Test
-    public void getRoutes() throws IncorrectFormatException {
+    public void getRoutes() throws IncorrectFormatException, WeatherException {
+
+        when(nsService.getNsTrips(any(RouteModel.class))).thenReturn(getJsonArrayFromTestResource());
         assertNotNull(travelService.getTripFromNs(routeModel));
     }
 

@@ -10,7 +10,6 @@ import com.mobiquity.mobtravelapp.validation.TravelValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,17 +22,13 @@ public class TravelService {
 
     private final Logger logger = LoggerFactory.getLogger(TravelService.class);
 
-    @Value("${api.ns.nl.url}")
-    private String uri;
-
-    @Value("${api.ns.nl.key}")
-    private String key;
-
     @Autowired
     private WeatherService weatherService;
 
     @Autowired
     private NsService nsService;
+
+    private String result;
 
 
     /**
@@ -64,8 +59,7 @@ public class TravelService {
      */
     public Trip getTripFromNs(RouteModel routeModel) throws IncorrectFormatException {
         RouteModel routeModelAfterReformat = reformatRoutes(routeModel);
-        String result = nsService.getNsTrips(routeModelAfterReformat);
-        JsonArray trips = extractAllTrips(result);
+        JsonArray trips = extractAllTrips(nsService.getNsTrips(routeModelAfterReformat));
         return new Trip(routeModelAfterReformat.getFromStation(), routeModelAfterReformat.getToStation(), routeModelAfterReformat.getDateTime(), extractAllRoutes(trips));
 
     }

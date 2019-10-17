@@ -1,6 +1,5 @@
 package com.mobiquity.mobtravelapp.service;
 
-import com.google.gson.JsonArray;
 import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
 import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +16,7 @@ import java.text.MessageFormat;
 @Service
 public class NsService {
     @Value("${api.ns.nl.url}")
-    private  String uri;
+    private String uri;
 
     @Value("${api.ns.nl.key}")
     private String key;
@@ -38,6 +37,6 @@ public class NsService {
         } catch (RestClientException e) {
             throw new IncorrectFormatException("Bad Request");
         }
-         return result.getBody();
+        return result.getBody();
     }
 }
