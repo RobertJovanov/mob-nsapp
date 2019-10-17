@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
+import com.mobiquity.mobtravelapp.exception.WeatherException;
 import com.mobiquity.mobtravelapp.model.travelModel.*;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
 import org.slf4j.Logger;
@@ -35,6 +36,14 @@ public class TravelService {
     @Value("${api.ns.nl.key}")
     private String key;
 
+
+    //auto wiring WeatherService
+    /**
+     * Manually creating a new instance of WeatherService when needed from the TravelService.
+     * The methods extractOriginStub() and extractDestinationStub() instantiate a new WeatherService on each call. Be careful with this one, unless there is a specific need for this, in general, a service behaves like a Singleton. This means that normally 1 instance is enough to make all the calls within your application (take this statement with a pinch of salt as more things should be considered such as thread safety)
+     * In this case, the JVM will take time every call to the method that instantiates the service. It will also take memory that will later be deallocated by the garbage collector.
+     * It could be a good idea to inject the WeatherService as a dependency.
+     */
     @Autowired
     private WeatherService weatherService;
 
@@ -46,9 +55,9 @@ public class TravelService {
      *
      * @param routeModel from getTripFromNs
      * @return reformated routemodel
-     * @throws Exception if the time is not in correct format
+     * @throws IncorrectFormatException if the time is not in correct format
      */
-    public RouteModel reformatRoutes(RouteModel routeModel) throws Exception {
+    public RouteModel reformatRoutes(RouteModel routeModel) throws IncorrectFormatException {
         if (!TravelValidation.checkInputTime(routeModel.getDateTime())) {
             throw new IncorrectFormatException("Date Time should be formatted as: yyyy-mm-dd'T'HH:MM:ss");
         }
@@ -65,9 +74,9 @@ public class TravelService {
      *
      * @param routeModel from the controller
      * @return Trip model which has list of routes
-     * @throws Exception if request parameters for ns api are incorrect
+     * @throws IncorrectFormatException if request parameters for ns api are incorrect
      */
-    public Trip getTripFromNs(RouteModel routeModel) throws Exception {
+    public Trip getTripFromNs(RouteModel routeModel) throws IncorrectFormatException {
         RouteModel routeModelAfterReformat = reformatRoutes(routeModel);
         String url = MessageFormat.format(uri, "fromStation=" + routeModelAfterReformat.getFromStation(),
                 "toStation=" + routeModelAfterReformat.getToStation(), "dateTime=" + routeModelAfterReformat.getDateTime());
@@ -121,18 +130,19 @@ public class TravelService {
 
                 routes.add(route);
             } else {
-                Route route = null;
+                Route  route = null;
                 try {
                     route = Route.builder()
-                            .index(index.getAndIncrement())
-                            .plannedDurationInMinutes(trip.get("plannedDurationInMinutes").getAsInt())
-                            .transfers(trip.get("transfers").getAsInt())
-                            .status(trip.get("status").getAsString())
-                            .legs(extractAllLegs(trip.get("legs").getAsJsonArray()))
-                            .build();
-                } catch (Exception e) {
+                                .index(index.getAndIncrement())
+                                .plannedDurationInMinutes(trip.get("plannedDurationInMinutes").getAsInt())
+                                .transfers(trip.get("transfers").getAsInt())
+                                .status(trip.get("status").getAsString())
+                                .legs(extractAllLegs(trip.get("legs").getAsJsonArray()))
+                                .build();
+                } catch (WeatherException e) {
                     e.printStackTrace();
                 }
+
 
                 routes.add(route);
             }
@@ -146,7 +156,7 @@ public class TravelService {
      * @param legArray a JsonArray of legs
      * @return List of legs
      */
-    public List<Leg> extractAllLegs(JsonArray legArray) throws Exception {
+    public List<Leg> extractAllLegs(JsonArray legArray) throws WeatherException {
         List<Leg> legs = new ArrayList<>();
         for (int i = 0; i < legArray.size(); i++) {
             JsonObject legAsJsonObject = legArray.get(i).getAsJsonObject();
@@ -167,7 +177,7 @@ public class TravelService {
      * @param stops a JsonArray of stops
      * @return originStub
      */
-    public OriginStub extractOriginStub(JsonArray stops) throws Exception {
+    public OriginStub extractOriginStub(JsonArray stops) throws WeatherException {
 //        WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(0).getAsJsonObject();
         return OriginStub.builder()
@@ -212,7 +222,7 @@ public class TravelService {
      * @param stops a JsonArray of stops
      * @return destinationStub  Details
      */
-    public DestinationStub extractDestinationStub(JsonArray stops) throws Exception {
+    public DestinationStub extractDestinationStub(JsonArray stops) throws WeatherException {
 //        WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(stops.size() - 1).getAsJsonObject();
         return DestinationStub.builder()

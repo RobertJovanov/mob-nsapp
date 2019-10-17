@@ -29,7 +29,7 @@ public class WeatherService {
      * @param dateTime current date and time
      * @return Weather object
      */
-    public Weather getWeather(Station station, String dateTime) throws Exception {
+    public Weather getWeather(Station station, String dateTime) throws WeatherException {
         String url = MessageFormat.format(uri, System.getenv(this.key), station.getLatitude(), station.getLongitude(), dateTime);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Weather> responseEntity;
