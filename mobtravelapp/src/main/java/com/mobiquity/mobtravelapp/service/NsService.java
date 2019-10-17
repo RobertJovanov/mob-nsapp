@@ -2,6 +2,7 @@ package com.mobiquity.mobtravelapp.service;
 
 import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
 import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,12 +22,15 @@ public class NsService {
     @Value("${api.ns.nl.key}")
     private String key;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     public String getNsTrips(RouteModel routeModelAfterReformat) throws IncorrectFormatException {
         String url = MessageFormat.format(uri, "fromStation=" + routeModelAfterReformat.getFromStation(),
                 "toStation=" + routeModelAfterReformat.getToStation(), "dateTime=" + routeModelAfterReformat.getDateTime());
 
 
-        RestTemplate restTemplate = new RestTemplate();
+        //RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Ocp-Apim-Subscription-Key", System.getenv(this.key));
 
