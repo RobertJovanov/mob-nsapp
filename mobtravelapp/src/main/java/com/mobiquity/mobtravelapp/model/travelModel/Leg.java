@@ -6,10 +6,10 @@ import java.util.List;
 @Getter
 @Builder
 public class Leg {
-    private String direction;
-    private OriginStub origin;
-    private DestinationStub destination;
-    private List<StopStub> stops;
+    private final String direction;
+    private final OriginStub origin;
+    private final DestinationStub destination;
+    private final List<StopStub> stops;
 
 
 }

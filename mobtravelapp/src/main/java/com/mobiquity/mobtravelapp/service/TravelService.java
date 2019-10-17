@@ -30,13 +30,14 @@ public class TravelService {
     private final Logger logger = LoggerFactory.getLogger(TravelService.class);
 
     @Value("${api.ns.nl.url}")
-    private String uri;
+    private  String uri;
 
     @Value("${api.ns.nl.key}")
     private String key;
 
     @Autowired
     private WeatherService weatherService;
+
 
     /**
      * Reformat the values of a RouteModel to adhere to our format standard.
@@ -52,10 +53,8 @@ public class TravelService {
         if (!TravelValidation.checkInputTime(routeModel.getDateTime())) {
             throw new IncorrectFormatException("Date Time should be formatted as: yyyy-mm-dd'T'HH:MM:ss");
         }
-        return RouteModel.builder().fromStation(TravelValidation.reformatStationName(routeModel.getFromStation()))
-                .toStation(TravelValidation.reformatStationName(routeModel.getToStation()))
-                .dateTime(routeModel.getDateTime())
-                .build();
+        return new RouteModel(TravelValidation.reformatStationName(routeModel.getFromStation()),TravelValidation.reformatStationName(routeModel.getToStation())
+                ,routeModel.getDateTime());
     }
 
     /**
@@ -87,7 +86,7 @@ public class TravelService {
         JsonArray trips = extractAllTrips(result.getBody());
         System.out.println(result.getBody());
 
-        return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), extractAllRoutes(trips));
+        return new Trip(routeModelAfterReformat.getFromStation(), routeModelAfterReformat.getToStation(), routeModelAfterReformat.getDateTime(), extractAllRoutes(trips));
 
     }
 

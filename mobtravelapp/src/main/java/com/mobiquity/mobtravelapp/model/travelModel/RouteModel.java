@@ -2,7 +2,8 @@ package com.mobiquity.mobtravelapp.model.travelModel;
 
 import lombok.*;
 
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 public class RouteModel {
     private String fromStation;

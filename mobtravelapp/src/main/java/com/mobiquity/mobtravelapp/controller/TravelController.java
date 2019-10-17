@@ -19,7 +19,8 @@ public class TravelController {
     @GetMapping("/routes")
     public Trip getRoutes(@RequestParam(value = "fromStation") String fromStation, @RequestParam(value = "toStation") String toStation,
                           @RequestParam(value = "dateTime", defaultValue = "") String dateTime) throws Exception {
-        return travelService.getTripFromNs(RouteModel.builder().fromStation(fromStation).toStation(toStation).dateTime(dateTime).build());
+
+        return travelService.getTripFromNs(new RouteModel(fromStation,toStation,dateTime));
     }
 
 

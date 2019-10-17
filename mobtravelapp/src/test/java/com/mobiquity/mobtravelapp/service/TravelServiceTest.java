@@ -40,12 +40,12 @@ public class TravelServiceTest {
     private final WeatherService weatherService = new WeatherService();
 
     @Value("${api.ns.nl.url}")
-    String nsNlUri;
+    private String nsNlUri;
 
     @Value("${api.ns.nl.key}")
-    String nsNlKey;
+    private String nsNlKey;
 
-    RouteModel routeModel = RouteModel.builder().fromStation("Amsterdam Zuid").toStation("Duivendrecht").dateTime("2019-10-09T12:30:00").build();
+    RouteModel routeModel = new RouteModel("Amsterdam Zuid","Duivendrecht","2019-10-09T12:30:00");
 
     @Before
     public void setUp() throws Exception {
