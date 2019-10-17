@@ -35,15 +35,7 @@ public class TravelService {
 
     @Value("${api.ns.nl.key}")
     private String key;
-
-
-    //auto wiring WeatherService
-    /**
-     * Manually creating a new instance of WeatherService when needed from the TravelService.
-     * The methods extractOriginStub() and extractDestinationStub() instantiate a new WeatherService on each call. Be careful with this one, unless there is a specific need for this, in general, a service behaves like a Singleton. This means that normally 1 instance is enough to make all the calls within your application (take this statement with a pinch of salt as more things should be considered such as thread safety)
-     * In this case, the JVM will take time every call to the method that instantiates the service. It will also take memory that will later be deallocated by the garbage collector.
-     * It could be a good idea to inject the WeatherService as a dependency.
-     */
+    
     @Autowired
     private WeatherService weatherService;
 
@@ -52,7 +44,6 @@ public class TravelService {
      * Reformat the values of a RouteModel to adhere to our format standard.
      * Standard: Stations should start with capital letter.
      * If a station name contains multiple words, each word should start with capital letter.
-     * calls validation method reformatStationName and checkInputTime
      *
      * @param routeModel from getTripFromNs
      * @return reformated routemodel
