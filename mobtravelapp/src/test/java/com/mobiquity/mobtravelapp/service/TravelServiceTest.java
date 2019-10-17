@@ -3,14 +3,19 @@ package com.mobiquity.mobtravelapp.service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mobiquity.mobtravelapp.model.WeatherModel.Weather;
 import com.mobiquity.mobtravelapp.model.travelModel.Route;
 import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
+import com.mobiquity.mobtravelapp.model.travelModel.Station;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
-import org.mockito.Spy;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -28,14 +33,25 @@ import static org.junit.Assert.*;
 @SpringBootTest
 public class TravelServiceTest {
 
-    @Spy
+    @InjectMocks
     private final TravelService travelService = new TravelService();
+
+    @Mock
+    private final WeatherService weatherService = new WeatherService();
+
+    @Value("${api.ns.nl.url}")
+    String nsNlUri;
+
+    @Value("${api.ns.nl.key}")
+    String nsNlKey;
+
     RouteModel routeModel = RouteModel.builder().fromStation("Amsterdam Zuid").toStation("Duivendrecht").dateTime("2019-10-09T12:30:00").build();
 
     @Before
-    public void setUp() {
-        ReflectionTestUtils.setField(travelService, "uri", "https://gateway.apiportal.ns.nl/public-reisinformatie/api/v3/trips?{0}&{1}&{2}");
-        ReflectionTestUtils.setField(travelService, "key", System.getenv("NSAPIKEY"));
+    public void setUp() throws Exception {
+        ReflectionTestUtils.setField(travelService, "uri", nsNlUri);
+        ReflectionTestUtils.setField(travelService, "key", nsNlKey);
+        Mockito.when(weatherService.getWeather(Station.builder().build(), "2019-10-09T12:30:00Z")).thenReturn(new Weather());
     }
 
     @Test

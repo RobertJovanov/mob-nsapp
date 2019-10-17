@@ -8,6 +8,8 @@ import com.mobiquity.mobtravelapp.model.travelModel.*;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,9 +29,14 @@ public class TravelService {
 
     private final Logger logger = LoggerFactory.getLogger(TravelService.class);
 
-    private String uri = "https://gateway.apiportal.ns.nl/public-reisinformatie/api/v3/trips?{0}&{1}&{2}";
+    @Value("${api.ns.nl.url}")
+    private String uri;
 
-    final String key = System.getenv("NSAPIKEY");
+    @Value("${api.ns.nl.key}")
+    private String key;
+
+    @Autowired
+    private WeatherService weatherService;
 
     /**
      * Reformat the values of a RouteModel to adhere to our format standard.
@@ -68,7 +75,7 @@ public class TravelService {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Ocp-Apim-Subscription-Key", key);
+        httpHeaders.add("Ocp-Apim-Subscription-Key", System.getenv(this.key));
 
         HttpEntity<String> entity = new HttpEntity<String>(httpHeaders);
         ResponseEntity<String> result;
@@ -161,7 +168,7 @@ public class TravelService {
      * @return originStub
      */
     public OriginStub extractOriginStub(JsonArray stops) throws Exception {
-       WeatherService weatherService = new WeatherService();
+//        WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(0).getAsJsonObject();
         return OriginStub.builder()
                 .actualDepartureDateTime(setActualDepartureTime(jsonObject))
@@ -206,7 +213,7 @@ public class TravelService {
      * @return destinationStub  Details
      */
     public DestinationStub extractDestinationStub(JsonArray stops) throws Exception {
-        WeatherService weatherService = new WeatherService();
+//        WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(stops.size() - 1).getAsJsonObject();
         return DestinationStub.builder()
                 .actualArrivalDateTime(setActualArrivalTime(jsonObject))
