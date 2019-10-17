@@ -2,22 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: hello-world-service
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:iam::473293451041:server-certificate/mob-nsapp-certificate
-    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
-    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
   labels:
     app: hello-world
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: hello-world
   ports:
-    - name: https
-      protocol: TCP
-      port: 443
-      targetPort: 80
-    - name: http
-      protocol: TCP
-      port: 80
+    - protocol: TCP
+      port: 1234
+      nodePort: 30001
       targetPort: 80
