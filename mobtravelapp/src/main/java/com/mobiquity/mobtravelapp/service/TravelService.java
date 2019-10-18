@@ -25,8 +25,6 @@ public class TravelService {
     @Autowired
     private NsService nsService;
 
-    private String result;
-
 
     /**
      * Reformat the values of a RouteModel to adhere to our format standard.
@@ -46,9 +44,8 @@ public class TravelService {
     }
 
     /**
-     * Gets all trips by making a api call to ns.nl
+     * Gets all trips
      * Validates and reformats parameters
-     * Calls extractAllRoutes to get the List of Routes
      *
      * @param routeModel from the controller
      * @return Trip model which has list of routes
@@ -139,7 +136,6 @@ public class TravelService {
      * @return originStub
      */
     public OriginStub extractOriginStub(JsonArray stops) throws WeatherException {
-//        WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(0).getAsJsonObject();
         return OriginStub.builder()
                 .actualDepartureDateTime(setActualDepartureTime(jsonObject))
@@ -184,7 +180,6 @@ public class TravelService {
      * @return destinationStub  Details
      */
     public DestinationStub extractDestinationStub(JsonArray stops) throws WeatherException {
-//        WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(stops.size() - 1).getAsJsonObject();
         return DestinationStub.builder()
                 .actualArrivalDateTime(setActualArrivalTime(jsonObject))
