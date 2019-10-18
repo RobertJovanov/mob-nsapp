@@ -5,26 +5,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
 import com.mobiquity.mobtravelapp.exception.WeatherException;
-import com.mobiquity.mobtravelapp.model.WeatherModel.Weather;
 import com.mobiquity.mobtravelapp.model.travelModel.Route;
 import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
-import com.mobiquity.mobtravelapp.model.travelModel.Station;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -73,7 +63,7 @@ public class TravelServiceTest {
 
     @Test
     public void getRoutes() throws IncorrectFormatException, WeatherException {
-
+        //when(weatherService.getWeather(Station.builder().build(),"2019-10-09T10:00:00")).thenReturn(new Weather());
         when(nsService.getNsTrips(any(RouteModel.class))).thenReturn(getJsonArrayFromTestResource());
         assertNotNull(travelService.getTripFromNs(routeModel));
     }
