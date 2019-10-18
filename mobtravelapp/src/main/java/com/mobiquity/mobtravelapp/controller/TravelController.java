@@ -1,5 +1,6 @@
 package com.mobiquity.mobtravelapp.controller;
 
+import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
 import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
 import com.mobiquity.mobtravelapp.model.travelModel.Trip;
 import com.mobiquity.mobtravelapp.service.TravelService;
@@ -18,7 +19,7 @@ public class TravelController {
 
     @GetMapping("/routes")
     public Trip getRoutes(@RequestParam(value = "fromStation") String fromStation, @RequestParam(value = "toStation") String toStation,
-                          @RequestParam(value = "dateTime", defaultValue = "") String dateTime) throws Exception {
+                          @RequestParam(value = "dateTime", defaultValue = "") String dateTime) throws IncorrectFormatException {
 
         return travelService.getTripFromNs(new RouteModel(fromStation,toStation,dateTime));
     }
