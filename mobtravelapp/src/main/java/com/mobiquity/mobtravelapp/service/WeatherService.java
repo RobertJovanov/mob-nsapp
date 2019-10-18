@@ -35,7 +35,6 @@ public class WeatherService {
      */
     public Weather getWeather(Station station, String dateTime) throws WeatherException {
         String url = MessageFormat.format(uri, System.getenv(this.key), station.getLatitude(), station.getLongitude(), dateTime);
-       // RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Weather> responseEntity;
         try {
             responseEntity = restTemplate.getForEntity(url, Weather.class);

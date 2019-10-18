@@ -25,7 +25,7 @@ public class NsService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public String getNsTrips(RouteModel routeModelAfterReformat) throws IncorrectFormatException {
+    public String getNsTrips(RouteModel routeModelAfterReformat) throws IncorrectFormatException{
         String url = MessageFormat.format(uri, "fromStation=" + routeModelAfterReformat.getFromStation(),
                 "toStation=" + routeModelAfterReformat.getToStation(), "dateTime=" + routeModelAfterReformat.getDateTime());
 
@@ -40,6 +40,7 @@ public class NsService {
             result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         } catch (RestClientException e) {
             throw new IncorrectFormatException("Bad Request");
+
         }
         return result.getBody();
     }

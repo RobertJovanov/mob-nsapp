@@ -53,6 +53,12 @@ public class TravelServiceTest {
 
     RouteModel routeModel = new RouteModel("Amsterdam Zuid", "Duivendrecht", "2019-10-09T12:30:00");
 
+    @Before
+    public void init() throws WeatherException, IncorrectFormatException {
+        when(weatherService.getWeather(any(Station.class),any())).thenReturn(new Weather());
+        when(nsService.getNsTrips(any(RouteModel.class))).thenReturn(getJsonArrayFromTestResource());
+    }
+
     @Test
     public void checkIfInputIsCaseInsensitive() {
         String fromStation = TravelValidation.reformatStationName("amsterdam zuid");
@@ -74,7 +80,6 @@ public class TravelServiceTest {
     @Test
     public void getRoutes() throws IncorrectFormatException, WeatherException {
 
-        when(nsService.getNsTrips(any(RouteModel.class))).thenReturn(getJsonArrayFromTestResource());
         assertNotNull(travelService.getTripFromNs(routeModel));
     }
 
