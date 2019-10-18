@@ -5,10 +5,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
 import com.mobiquity.mobtravelapp.exception.WeatherException;
-import com.mobiquity.mobtravelapp.model.WeatherModel.Weather;
+
 import com.mobiquity.mobtravelapp.model.travelModel.Route;
 import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
 import com.mobiquity.mobtravelapp.model.travelModel.Station;
+import com.mobiquity.mobtravelapp.model.weatherModel.Weather;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
 import org.junit.Before;
 import org.junit.Test;

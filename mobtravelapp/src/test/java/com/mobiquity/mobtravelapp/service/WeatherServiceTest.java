@@ -1,6 +1,5 @@
 package com.mobiquity.mobtravelapp.service;
-
-import com.mobiquity.mobtravelapp.model.WeatherModel.Weather;
+import com.mobiquity.mobtravelapp.model.weatherModel.Weather;
 import com.mobiquity.mobtravelapp.model.travelModel.Station;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +39,7 @@ public class WeatherServiceTest {
     public void setUp() {
         ReflectionTestUtils.setField(weatherService, "uri", weatherUri);
         ReflectionTestUtils.setField(weatherService, "key", weatherKey);
-        Mockito.when(restTemplate.getForEntity("https://api.darksky.net/forecast/b5548ad13c478c1abc522db68b7761cb/52.33902,4.873061,2019-10-15T10:26:00+0200", Weather.class))
+        Mockito.when(restTemplate.getForEntity("https://api.darksky.net/forecast/b5548ad13c478c1abc522db68b7761cb/52.33902,4.873061,2019-10-15T10:26:00+0200", com.mobiquity.mobtravelapp.model.weatherModel.Weather.class))
                 .thenReturn(new ResponseEntity<Weather>(new Weather(), HttpStatus.OK));
     }
 

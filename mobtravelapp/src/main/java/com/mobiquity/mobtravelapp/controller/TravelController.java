@@ -17,7 +17,7 @@ public class TravelController {
     @Autowired
     TravelService travelService;
 
-    @GetMapping("/routes")
+    @GetMapping ("/routes")
     public Trip getRoutes(@RequestParam(value = "fromStation") String fromStation, @RequestParam(value = "toStation") String toStation,
                           @RequestParam(value = "dateTime", defaultValue = "") String dateTime) throws IncorrectFormatException {
 

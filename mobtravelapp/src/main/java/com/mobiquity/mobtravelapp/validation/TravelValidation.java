@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TravelValidation {
-
+    private static Pattern pattern = Pattern.compile("^(([A-Z])([a-z])+\\s*)+$");
     /**
      * Reformat the values of station name to adhere to our format standard.
      * Standard: Stations should start with capital letter.
@@ -19,7 +19,7 @@ public class TravelValidation {
      * @return reformatted name String
      */
     public static String reformatStationName(String station) {
-        Pattern pattern = Pattern.compile("^(([A-Z])([a-z])+\\s*)+$");
+
         Matcher matcher = pattern.matcher(station);
         if (matcher.matches() == false) {
             String[] words = station.split("\\s");

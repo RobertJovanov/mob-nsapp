@@ -7,8 +7,6 @@ import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
 import com.mobiquity.mobtravelapp.exception.WeatherException;
 import com.mobiquity.mobtravelapp.model.travelModel.*;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +18,6 @@ import java.util.stream.IntStream;
 @Service
 public class TravelService {
 
-    private final Logger logger = LoggerFactory.getLogger(TravelService.class);
 
     @Autowired
     private WeatherService weatherService;
