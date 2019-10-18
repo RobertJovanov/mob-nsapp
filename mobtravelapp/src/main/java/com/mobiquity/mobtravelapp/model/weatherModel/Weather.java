@@ -1,4 +1,4 @@
-package com.mobiquity.mobtravelapp.model.WeatherModel;
+package com.mobiquity.mobtravelapp.model.weatherModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
