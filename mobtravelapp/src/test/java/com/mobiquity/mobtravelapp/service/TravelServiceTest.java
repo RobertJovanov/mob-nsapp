@@ -3,15 +3,27 @@ package com.mobiquity.mobtravelapp.service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
+import com.mobiquity.mobtravelapp.exception.WeatherException;
+
 import com.mobiquity.mobtravelapp.model.travelModel.Route;
 import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
+import com.mobiquity.mobtravelapp.model.travelModel.Station;
+import com.mobiquity.mobtravelapp.model.weatherModel.Weather;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -23,19 +35,29 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
 public class TravelServiceTest {
 
-    @Spy
+    @InjectMocks
     private final TravelService travelService = new TravelService();
-    RouteModel routeModel = RouteModel.builder().fromStation("Amsterdam Zuid").toStation("Duivendrecht").dateTime("2019-10-09T12:30:00").build();
+
+    @Mock
+    private final WeatherService weatherService = new WeatherService();
+
+    @Mock
+    private final NsService nsService = new NsService();
+
+    RouteModel routeModel = new RouteModel("Amsterdam Zuid", "Duivendrecht", "2019-10-09T12:30:00");
 
     @Before
-    public void setUp() {
-        ReflectionTestUtils.setField(travelService, "uri", "https://gateway.apiportal.ns.nl/public-reisinformatie/api/v3/trips?{0}&{1}&{2}");
-        ReflectionTestUtils.setField(travelService, "key", System.getenv("NSAPIKEY"));
+    public void init() throws WeatherException, IncorrectFormatException {
+        when(weatherService.getWeather(any(Station.class),any())).thenReturn(new Weather());
+        when(nsService.getNsTrips(any(RouteModel.class))).thenReturn(getJsonArrayFromTestResource());
     }
 
     @Test
@@ -57,7 +79,8 @@ public class TravelServiceTest {
     }
 
     @Test
-    public void getRoutes() throws Exception {
+    public void getRoutes() throws IncorrectFormatException, WeatherException {
+
         assertNotNull(travelService.getTripFromNs(routeModel));
     }
 

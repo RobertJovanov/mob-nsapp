@@ -7,10 +7,10 @@ import java.util.List;
 @Getter
 @Builder
 public class Route {
-    private int index;
-    private int plannedDurationInMinutes;
-    private int transfers;
-    private String status;
-    private List<Leg> legs;
+    private final int index;
+    private final int plannedDurationInMinutes;
+    private final int transfers;
+    private final String status;
+    private final List<Leg> legs;
 
 }

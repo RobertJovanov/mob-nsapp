@@ -1,16 +1,16 @@
 package com.mobiquity.mobtravelapp.model.travelModel;
 
-import com.mobiquity.mobtravelapp.model.WeatherModel.Weather;
+import com.mobiquity.mobtravelapp.model.weatherModel.Weather;
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
 @Getter
 public class DestinationStub {
-    private String plannedArrivalDateTime;
-    private String actualArrivalDateTime;
-    private String plannedArrivalTrack;
-    private String actualArrivalTrack;
-    private Station station;
-    private Weather weather;
+    private final String plannedArrivalDateTime;
+    private final String actualArrivalDateTime;
+    private final String plannedArrivalTrack;
+    private final String actualArrivalTrack;
+    private final Station station;
+    private final Weather weather;
 }

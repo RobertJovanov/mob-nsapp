@@ -6,13 +6,13 @@ import lombok.Getter;
 @Builder
 @Getter
 public class StopStub {
-    private String plannedArrivalDateTime;
-    private String actualArrivalDateTime;
-    private String plannedDepartureDateTime;
-    private String actualDepartureDateTime;
-    private String plannedArrivalTrack;
-    private String actualArrivalTrack;
-    private Station station;
+    private final String plannedArrivalDateTime;
+    private final String actualArrivalDateTime;
+    private final String plannedDepartureDateTime;
+    private final String actualDepartureDateTime;
+    private final String plannedArrivalTrack;
+    private final String actualArrivalTrack;
+    private final Station station;
 
 
 

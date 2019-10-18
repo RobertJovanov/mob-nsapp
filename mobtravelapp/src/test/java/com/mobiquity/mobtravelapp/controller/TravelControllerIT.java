@@ -33,7 +33,7 @@ public class TravelControllerIT {
     TravelController travelController;
 
     @Before
-    public void setup() throws Exception {
+    public void setup()  {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 

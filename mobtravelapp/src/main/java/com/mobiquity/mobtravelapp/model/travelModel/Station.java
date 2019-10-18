@@ -5,8 +5,8 @@ import lombok.*;
 @Builder
 @Getter
 public class Station {
-    private String name;
-   private String latitude;
-   private String longitude;
+    private final String name;
+   private final String latitude;
+   private final String longitude;
 
 }

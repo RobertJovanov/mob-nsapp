@@ -4,19 +4,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
+import com.mobiquity.mobtravelapp.exception.WeatherException;
 import com.mobiquity.mobtravelapp.model.travelModel.*;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,30 +18,31 @@ import java.util.stream.IntStream;
 @Service
 public class TravelService {
 
-    private final Logger logger = LoggerFactory.getLogger(TravelService.class);
 
-    private String uri = "https://gateway.apiportal.ns.nl/public-reisinformatie/api/v3/trips?{0}&{1}&{2}";
+    @Autowired
+    private WeatherService weatherService;
 
-    final String key = System.getenv("NSAPIKEY");
+    @Autowired
+    private NsService nsService;
+
+    private String result;
+
 
     /**
      * Reformat the values of a RouteModel to adhere to our format standard.
      * Standard: Stations should start with capital letter.
      * If a station name contains multiple words, each word should start with capital letter.
-     * calls validation method reformatStationName and checkInputTime
      *
      * @param routeModel from getTripFromNs
      * @return reformated routemodel
-     * @throws Exception if the time is not in correct format
+     * @throws IncorrectFormatException if the time is not in correct format
      */
-    public RouteModel reformatRoutes(RouteModel routeModel) throws Exception {
+    public RouteModel reformatRoutes(RouteModel routeModel) throws IncorrectFormatException {
         if (!TravelValidation.checkInputTime(routeModel.getDateTime())) {
             throw new IncorrectFormatException("Date Time should be formatted as: yyyy-mm-dd'T'HH:MM:ss");
         }
-        return RouteModel.builder().fromStation(TravelValidation.reformatStationName(routeModel.getFromStation()))
-                .toStation(TravelValidation.reformatStationName(routeModel.getToStation()))
-                .dateTime(routeModel.getDateTime())
-                .build();
+        return new RouteModel(TravelValidation.reformatStationName(routeModel.getFromStation()), TravelValidation.reformatStationName(routeModel.getToStation())
+                , routeModel.getDateTime());
     }
 
     /**
@@ -58,29 +52,12 @@ public class TravelService {
      *
      * @param routeModel from the controller
      * @return Trip model which has list of routes
-     * @throws Exception if request parameters for ns api are incorrect
+     * @throws IncorrectFormatException if request parameters for ns api are incorrect
      */
-    public Trip getTripFromNs(RouteModel routeModel) throws Exception {
+    public Trip getTripFromNs(RouteModel routeModel) throws IncorrectFormatException {
         RouteModel routeModelAfterReformat = reformatRoutes(routeModel);
-        String url = MessageFormat.format(uri, "fromStation=" + routeModelAfterReformat.getFromStation(),
-                "toStation=" + routeModelAfterReformat.getToStation(), "dateTime=" + routeModelAfterReformat.getDateTime());
-        logger.info(url);
-
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Ocp-Apim-Subscription-Key", key);
-
-        HttpEntity<String> entity = new HttpEntity<String>(httpHeaders);
-        ResponseEntity<String> result;
-        try {
-            result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-        } catch (RestClientException e) {
-            throw new IncorrectFormatException("Bad Request");
-        }
-        JsonArray trips = extractAllTrips(result.getBody());
-        System.out.println(result.getBody());
-
-        return Trip.createTrip(routeModel.getFromStation(), routeModel.getToStation(), routeModel.getDateTime(), extractAllRoutes(trips));
+        JsonArray trips = extractAllTrips(nsService.getNsTrips(routeModelAfterReformat));
+        return new Trip(routeModelAfterReformat.getFromStation(), routeModelAfterReformat.getToStation(), routeModelAfterReformat.getDateTime(), extractAllRoutes(trips));
 
     }
 
@@ -123,9 +100,10 @@ public class TravelService {
                             .status(trip.get("status").getAsString())
                             .legs(extractAllLegs(trip.get("legs").getAsJsonArray()))
                             .build();
-                } catch (Exception e) {
+                } catch (WeatherException e) {
                     e.printStackTrace();
                 }
+
 
                 routes.add(route);
             }
@@ -139,7 +117,7 @@ public class TravelService {
      * @param legArray a JsonArray of legs
      * @return List of legs
      */
-    public List<Leg> extractAllLegs(JsonArray legArray) throws Exception {
+    public List<Leg> extractAllLegs(JsonArray legArray) throws WeatherException {
         List<Leg> legs = new ArrayList<>();
         for (int i = 0; i < legArray.size(); i++) {
             JsonObject legAsJsonObject = legArray.get(i).getAsJsonObject();
@@ -160,8 +138,8 @@ public class TravelService {
      * @param stops a JsonArray of stops
      * @return originStub
      */
-    public OriginStub extractOriginStub(JsonArray stops) throws Exception {
-       WeatherService weatherService = new WeatherService();
+    public OriginStub extractOriginStub(JsonArray stops) throws WeatherException {
+//        WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(0).getAsJsonObject();
         return OriginStub.builder()
                 .actualDepartureDateTime(setActualDepartureTime(jsonObject))
@@ -205,8 +183,8 @@ public class TravelService {
      * @param stops a JsonArray of stops
      * @return destinationStub  Details
      */
-    public DestinationStub extractDestinationStub(JsonArray stops) throws Exception {
-        WeatherService weatherService = new WeatherService();
+    public DestinationStub extractDestinationStub(JsonArray stops) throws WeatherException {
+//        WeatherService weatherService = new WeatherService();
         JsonObject jsonObject = stops.get(stops.size() - 1).getAsJsonObject();
         return DestinationStub.builder()
                 .actualArrivalDateTime(setActualArrivalTime(jsonObject))
