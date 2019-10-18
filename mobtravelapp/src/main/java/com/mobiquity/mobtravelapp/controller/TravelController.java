@@ -10,16 +10,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/travelInfo")
+//@RequestMapping("/travelInfo")
 public class TravelController {
 
     @Autowired
     TravelService travelService;
 
-    @GetMapping("/routes")
+    //@GetMapping("/routes")
+    @RequestMapping("/travelInfo/routes")
     public Trip getRoutes(@RequestParam(value = "fromStation") String fromStation, @RequestParam(value = "toStation") String toStation,
                           @RequestParam(value = "dateTime", defaultValue = "") String dateTime) throws Exception {
         return travelService.getTripFromNs(RouteModel.builder().fromStation(fromStation).toStation(toStation).dateTime(dateTime).build());
+    }
+
+    @RequestMapping("/")
+    public String checkHealth(){
+        return "We are fine and dandy\n";
     }
 
 
