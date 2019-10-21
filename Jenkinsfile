@@ -8,11 +8,21 @@ node {
             sh "helm lint --strict ./helm/hello-world/"
             sh "helm lint --strict ./helm/mob-nsapp/"
         }
-    
+
         stage("Build") {
             dir('mobtravelapp') {
+
+                // The POM_VERSION variable should already exist in Jenkins,
+                // but there seems to be a bug in how it's cached, so we'll
+                // fetch it manually instead.
+                // See: https://issues.jenkins-ci.org/browse/JENKINS-24869
+                POM_VERSION = sh (
+                    script: "mvn help:evaluate -Dexpression=project.version | grep -v '^\\['",
+                    returnStdout: true
+                ).replaceAll('\n', '')
+
                 sh 'mvn clean package'
-                archiveArtifacts 'target/mobtravelapp-0.0.1-SNAPSHOT.jar'
+                archiveArtifacts "target/mobtravelapp-${POM_VERSION}.jar"
             }
         }
     
@@ -21,6 +31,8 @@ node {
                 "473293451041.dkr.ecr.eu-central-1.amazonaws.com/mob-nsapp"
             )
             image.push("0.${env.BUILD_NUMBER}")
+            // Use this once we have proper versioning:
+            // image.push("0.${POM_VERSION}")
         }
     
         stage("Approval"){
