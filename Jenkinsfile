@@ -4,31 +4,11 @@ node {
             sh "helm lint --strict ./helm/hello-world/"
             sh "helm lint --strict ./helm/mob-nsapp/"
         }
-
-        // Get the NS API key from Kubernetes (we need this for tests to work)
-        NSAPIKEY = sh (
-            script: "kubectl get secrets nsapikey --template='{{ .data.NSAPIKEY }}' | base64 --decode",
-            returnStdout: true
-        )
-        OPENWEATHERAPIKEY = sh (
-            script: "kubectl get secrets openweatherapikey --template='{{ .data.OPENWEATHERAPIKEY }}' | base64 --decode",
-            returnStdout: true
-        )
-        DARKSKYAPIKEY = sh (
-            script: "kubectl get secrets darkskyapikey --template='{{ .data.DARKSKYAPIKEY }}' | base64 --decode",
-            returnStdout: true
-        )
     
         stage("Build") {
             dir('mobtravelapp') {
-                withEnv([
-                    "NSAPIKEY=${NSAPIKEY}",
-                    "OPENWEATHERAPIKEY=${OPENWEATHERAPIKEY}",
-                    "DARKSKYAPIKEY=${DARKSKYAPIKEY}"
-                ]) {
-                    sh 'mvn clean package'
-                    archiveArtifacts 'target/mobtravelapp-0.0.1-SNAPSHOT.jar'
-                }
+                sh 'mvn clean package'
+                archiveArtifacts 'target/mobtravelapp-0.0.1-SNAPSHOT.jar'
             }
         }
     
