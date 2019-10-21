@@ -1,5 +1,9 @@
 node {
     try {
+        // An explicit checkout is still needed, otherwise Jenkins
+        // uses the last version of the repository that it has.
+        checkout scm
+
         stage("Linting & validation") {
             sh "helm lint --strict ./helm/hello-world/"
             sh "helm lint --strict ./helm/mob-nsapp/"
