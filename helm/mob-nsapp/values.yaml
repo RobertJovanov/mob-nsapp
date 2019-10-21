@@ -2,6 +2,6 @@ replicaCount: 3
 
 image:
   repository: 473293451041.dkr.ecr.eu-central-1.amazonaws.com/mob-nsapp
-  tag: 0.68
+  tag: 0.83
 
 certificateArn: arn:aws:iam::473293451041:server-certificate/mob-nsapp-certificate
