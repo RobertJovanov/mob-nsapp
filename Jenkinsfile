@@ -1,5 +1,10 @@
 node {
     try {
+        stage("Linting & validation") {
+            sh "helm lint --strict ./helm/hello-world/"
+            sh "helm lint --strict ./helm/mob-nsapp/"
+        }
+
         // Get the NS API key from Kubernetes (we need this for tests to work)
         NSAPIKEY = sh (
             script: "kubectl get secrets nsapikey --template='{{ .data.NSAPIKEY }}' | base64 --decode",
@@ -13,17 +18,6 @@ node {
             script: "kubectl get secrets darkskyapikey --template='{{ .data.DARKSKYAPIKEY }}' | base64 --decode",
             returnStdout: true
         )
-    
-        stage("Checkout") {
-            checkout([
-                $class: 'GitSCM',
-                branches: [[name: '*/master']],
-                doGenerateSubmoduleConfigurations: false,
-                extensions: [],
-                submoduleCfg: [],
-                userRemoteConfigs: [[url: 'https://github.com/RobertJovanov/mob-nsapp.git']]
-            ])
-        }
     
         stage("Build") {
             dir('mobtravelapp') {
@@ -51,8 +45,6 @@ node {
         }
     
         stage("Deploy to EKS") {
-            sh "helm lint --strict ./helm/hello-world/"
-            sh "helm lint --strict ./helm/mob-nsapp/"
             sh "helm upgrade --install hello-world ./helm/hello-world/"
             sh "helm upgrade --install mob-nsapp ./helm/mob-nsapp/"
         }
