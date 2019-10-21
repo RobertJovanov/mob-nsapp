@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
 import com.mobiquity.mobtravelapp.exception.WeatherException;
-
 import com.mobiquity.mobtravelapp.model.travelModel.Route;
 import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
 import com.mobiquity.mobtravelapp.model.travelModel.Station;
@@ -13,19 +12,12 @@ import com.mobiquity.mobtravelapp.model.weatherModel.Weather;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;

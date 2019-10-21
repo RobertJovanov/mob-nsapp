@@ -118,13 +118,16 @@ public class TravelService {
         List<Leg> legs = new ArrayList<>();
         for (int i = 0; i < legArray.size(); i++) {
             JsonObject legAsJsonObject = legArray.get(i).getAsJsonObject();
-            Leg leg = Leg.builder()
-                    .direction(legAsJsonObject.get("direction").getAsString())
-                    .origin(extractOriginStub(legAsJsonObject.get("stops").getAsJsonArray()))
-                    .destination(extractDestinationStub(legAsJsonObject.get("stops").getAsJsonArray()))
-                    .stops(extractAllStops(legAsJsonObject.get("stops").getAsJsonArray()))
-                    .build();
-            legs.add(leg);
+            if(legAsJsonObject.has("direction")) {
+                Leg leg = Leg.builder()
+                        .direction(legAsJsonObject.get("direction").getAsString())
+                        .origin(extractOriginStub(legAsJsonObject.get("stops").getAsJsonArray()))
+                        .destination(extractDestinationStub(legAsJsonObject.get("stops").getAsJsonArray()))
+                        .stops(extractAllStops(legAsJsonObject.get("stops").getAsJsonArray()))
+                        .build();
+                legs.add(leg);
+            }
+
         }
         return legs;
     }
