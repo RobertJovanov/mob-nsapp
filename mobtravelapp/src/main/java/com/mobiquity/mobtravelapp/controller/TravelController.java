@@ -22,7 +22,7 @@ public class TravelController {
 
     @RequestMapping("/")
     public String checkHealth(){
-        return "We are fine\n";
+        return "Application is healthy.\n";
     }
 
 }
