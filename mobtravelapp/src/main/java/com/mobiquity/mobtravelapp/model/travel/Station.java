@@ -1,4 +1,4 @@
-package com.mobiquity.mobtravelapp.model.travelModel;
+package com.mobiquity.mobtravelapp.model.travel;
 
 import lombok.*;
 

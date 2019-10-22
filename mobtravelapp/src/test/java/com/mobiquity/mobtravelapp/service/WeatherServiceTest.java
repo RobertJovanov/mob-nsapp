@@ -1,9 +1,9 @@
 package com.mobiquity.mobtravelapp.service;
-import com.mobiquity.mobtravelapp.model.weatherModel.Weather;
-import com.mobiquity.mobtravelapp.model.travelModel.Station;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import com.mobiquity.mobtravelapp.model.travel.Station;
+import com.mobiquity.mobtravelapp.model.weather.Weather;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -11,13 +11,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest
 public class WeatherServiceTest {
 
@@ -30,22 +29,22 @@ public class WeatherServiceTest {
     String weatherKey;
 
     @InjectMocks
-    WeatherService weatherService;
+    WeatherService weatherService = new WeatherService();
 
     @Mock
     RestTemplate restTemplate;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ReflectionTestUtils.setField(weatherService, "uri", weatherUri);
         ReflectionTestUtils.setField(weatherService, "key", weatherKey);
-        Mockito.when(restTemplate.getForEntity("https://api.darksky.net/forecast/b5548ad13c478c1abc522db68b7761cb/52.33902,4.873061,2019-10-15T10:26:00+0200", com.mobiquity.mobtravelapp.model.weatherModel.Weather.class))
-                .thenReturn(new ResponseEntity<Weather>(new Weather(), HttpStatus.OK));
     }
 
     @Test
     public void checkIfApiCallIsSuccessful() throws Exception {
-        assertNotNull(weatherService.getWeather(station, "2019-10-15T10:26:00+0200"));
+        Mockito.when(restTemplate.getForEntity("https://api.darksky.net/forecast/b5548ad13c478c1abc522db68b7761cb/52.33902,4.873061,2019-10-15T10:26:00+0200",
+                Weather.class)).thenReturn(new ResponseEntity<Weather>(new Weather(), HttpStatus.OK));
+            assertNotNull(weatherService.getWeather(station, "2019-10-15T10:26:00+0200"));
     }
 
 

@@ -1,9 +1,8 @@
-package com.mobiquity.mobtravelapp.model.travelModel;
+package com.mobiquity.mobtravelapp.model.travel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
