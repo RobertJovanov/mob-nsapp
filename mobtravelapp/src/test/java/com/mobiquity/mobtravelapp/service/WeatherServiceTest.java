@@ -42,7 +42,7 @@ public class WeatherServiceTest {
 
     @Test
     public void checkIfApiCallIsSuccessful() throws Exception {
-        Mockito.when(restTemplate.getForEntity("https://api.darksky.net/forecast/b5548ad13c478c1abc522db68b7761cb/52.33902,4.873061,2019-10-15T10:26:00+0200",
+        Mockito.when(restTemplate.getForEntity("https://api.darksky.net/forecast/null/52.33902,4.873061,2019-10-15T10:26:00+0200",
                 Weather.class)).thenReturn(new ResponseEntity<Weather>(new Weather(), HttpStatus.OK));
             assertNotNull(weatherService.getWeather(station, "2019-10-15T10:26:00+0200"));
     }
