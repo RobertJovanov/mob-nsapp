@@ -25,7 +25,7 @@ node {
                 archiveArtifacts "target/mobtravelapp-${POM_VERSION}.jar"
                 step([
                     $class: 'JUnitResultArchiver',
-                    testResults: 'mobtravelapp/target/surefire-reports/*.xml'
+                    testResults: 'target/surefire-reports/*.xml'
                 ])
             }
         }
