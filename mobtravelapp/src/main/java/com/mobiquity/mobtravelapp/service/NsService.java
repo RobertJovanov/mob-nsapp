@@ -1,7 +1,7 @@
 package com.mobiquity.mobtravelapp.service;
 
 import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
-import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
+import com.mobiquity.mobtravelapp.model.travel.RouteModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;

@@ -5,18 +5,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
 import com.mobiquity.mobtravelapp.exception.WeatherException;
-import com.mobiquity.mobtravelapp.model.travelModel.Route;
-import com.mobiquity.mobtravelapp.model.travelModel.RouteModel;
-import com.mobiquity.mobtravelapp.model.travelModel.Station;
-import com.mobiquity.mobtravelapp.model.weatherModel.Weather;
+import com.mobiquity.mobtravelapp.model.travel.Route;
+import com.mobiquity.mobtravelapp.model.travel.RouteModel;
+import com.mobiquity.mobtravelapp.model.travel.Station;
+import com.mobiquity.mobtravelapp.model.weather.Weather;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
@@ -30,7 +28,6 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
 public class TravelServiceTest {
 
@@ -45,9 +42,9 @@ public class TravelServiceTest {
 
     RouteModel routeModel = new RouteModel("Amsterdam Zuid", "Duivendrecht", "2019-10-09T12:30:00");
 
-    @Before
+    @BeforeEach
     public void init() throws WeatherException, IncorrectFormatException {
-        when(weatherService.getWeather(any(Station.class),any())).thenReturn(new Weather());
+        when(weatherService.getWeather(any(Station.class), any())).thenReturn(new Weather());
         when(nsService.getNsTrips(any(RouteModel.class))).thenReturn(getJsonArrayFromTestResource());
     }
 
