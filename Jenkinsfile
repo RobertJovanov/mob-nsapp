@@ -23,6 +23,10 @@ node {
 
                 sh 'mvn clean package'
                 archiveArtifacts "target/mobtravelapp-${POM_VERSION}.jar"
+                step([
+                    $class: 'JUnitResultArchiver',
+                    testResults: 'mobtravelapp/target/surefire-reports/*.xml'
+                ])
             }
         }
     
