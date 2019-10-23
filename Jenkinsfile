@@ -7,25 +7,54 @@ node {
         stage("Linting & validation") {
             sh "helm lint --strict ./helm/hello-world/"
             sh "helm lint --strict ./helm/mob-nsapp/"
-        }
 
-        stage("Build") {
+            // The POM_VERSION variable should already exist in Jenkins,
+            // but there seems to be a bug in how it's cached, so we'll
+            // fetch it manually instead.
+            // See: https://issues.jenkins-ci.org/browse/JENKINS-24869
             dir('mobtravelapp') {
-
-                // The POM_VERSION variable should already exist in Jenkins,
-                // but there seems to be a bug in how it's cached, so we'll
-                // fetch it manually instead.
-                // See: https://issues.jenkins-ci.org/browse/JENKINS-24869
                 POM_VERSION = sh (
                     script: "mvn help:evaluate -Dexpression=project.version | grep -v '^\\['",
                     returnStdout: true
                 ).replaceAll('\n', '')
+            }
+        }
 
-                sh 'mvn clean package'
-                archiveArtifacts "target/mobtravelapp-${POM_VERSION}.jar"
+        NSAPIKEY = sh (
+            script: "kubectl get secrets nsapikey --template='{{ .data.NSAPIKEY }}' | base64 --decode",
+            returnStdout: true
+        )
+        DARKSKYAPIKEY = sh (
+            script: "kubectl get secrets darkskyapikey --template='{{ .data.DARKSKYAPIKEY }}' | base64 --decode",
+            returnStdout: true
+        )
+
+        dir('mobtravelapp') {
+
+            stage("Unit tests") {
+                sh 'mvn clean test'
+
+                // "Surefire" Maven plugin runs unit tests
                 step([
                     $class: 'JUnitResultArchiver',
                     testResults: 'target/surefire-reports/*.xml'
+                ])
+            }
+
+            stage("Integration tests & packaging") {
+
+                // `verify` is the Maven target that comes after `package`
+                // By convention, this is where integration tests are placed.
+                withEnv(["NSAPIKEY=${NSAPIKEY}", "DARKSKYAPIKEY=${DARKSKYAPIKEY}"]) {
+                    sh 'mvn verify'
+                }
+
+                archiveArtifacts "target/mobtravelapp-${POM_VERSION}.jar"
+
+                // "Failsafe" Maven plugin runs integration tests
+                step([
+                    $class: 'JUnitResultArchiver',
+                    testResults: 'target/failsafe-reports/*.xml'
                 ])
             }
         }
