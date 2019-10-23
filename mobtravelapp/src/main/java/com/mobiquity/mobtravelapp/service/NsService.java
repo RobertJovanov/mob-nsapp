@@ -29,8 +29,6 @@ public class NsService {
         String url = MessageFormat.format(uri, "fromStation=" + routeModelAfterReformat.getFromStation(),
                 "toStation=" + routeModelAfterReformat.getToStation(), "dateTime=" + routeModelAfterReformat.getDateTime());
 
-
-        //RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Ocp-Apim-Subscription-Key", System.getenv(this.key));
 
