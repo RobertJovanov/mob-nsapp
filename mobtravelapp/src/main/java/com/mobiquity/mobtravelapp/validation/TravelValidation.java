@@ -1,5 +1,7 @@
 package com.mobiquity.mobtravelapp.validation;
 
+import org.springframework.validation.annotation.Validated;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -2,8 +2,8 @@ package com.mobiquity.mobtravelapp.service;
 
 
 import com.mobiquity.mobtravelapp.exception.WeatherException;
-import com.mobiquity.mobtravelapp.model.weather.Weather;
 import com.mobiquity.mobtravelapp.model.travel.Station;
+import com.mobiquity.mobtravelapp.model.weather.Weather;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +16,15 @@ import java.text.MessageFormat;
 @Service
 public class WeatherService {
 
-    @Value("${api.darksky.net.url}")
     private String uri;
-
-    @Value("${api.darksky.net.key}")
     private String key;
-
-    @Autowired
     private RestTemplate restTemplate;
+
+    public WeatherService(@Value("${api.darksky.net.url}") String uri, @Value("${api.darksky.net.key}") String key, RestTemplate restTemplate) {
+        this.uri = uri;
+        this.key = key;
+        this.restTemplate = restTemplate;
+    }
 
     /**
      * Extracts weather for Origin and Destination stations,
@@ -33,7 +34,7 @@ public class WeatherService {
      * @param dateTime current date and time
      * @return Weather object
      */
-    public Weather getWeather(Station station, String dateTime) throws WeatherException {
+    public Weather getWeather(Station station, String dateTime) {
         String url = MessageFormat.format(uri, System.getenv(key), station.getLatitude(), station.getLongitude(), dateTime);
         ResponseEntity<Weather> responseEntity;
         try {

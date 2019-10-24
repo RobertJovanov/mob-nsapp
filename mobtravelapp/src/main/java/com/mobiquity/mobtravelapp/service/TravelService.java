@@ -7,22 +7,20 @@ import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
 import com.mobiquity.mobtravelapp.exception.WeatherException;
 import com.mobiquity.mobtravelapp.model.travel.*;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
+@AllArgsConstructor
 @Service
 public class TravelService {
 
-
-    @Autowired
     private WeatherService weatherService;
-
-    @Autowired
     private NsService nsService;
 
 
@@ -35,7 +33,7 @@ public class TravelService {
      * @return reformated routemodel
      * @throws IncorrectFormatException if the time is not in correct format
      */
-    public RouteModel reformatRoutes(RouteModel routeModel) throws IncorrectFormatException {
+    public RouteModel reformatRoutes(RouteModel routeModel) {
         if (!TravelValidation.checkInputTime(routeModel.getDateTime())) {
             throw new IncorrectFormatException("Date Time should be formatted as: yyyy-mm-dd'T'HH:MM:ss");
         }
@@ -51,7 +49,7 @@ public class TravelService {
      * @return Trip model which has list of routes
      * @throws IncorrectFormatException if request parameters for ns api are incorrect
      */
-    public Trip getTripFromNs(RouteModel routeModel) throws IncorrectFormatException {
+    public Trip getTripFromNs(RouteModel routeModel){
         RouteModel routeModelAfterReformat = reformatRoutes(routeModel);
         JsonArray trips = extractAllTrips(nsService.getNsTrips(routeModelAfterReformat));
         return new Trip(routeModelAfterReformat.getFromStation(), routeModelAfterReformat.getToStation(), routeModelAfterReformat.getDateTime(), extractAllRoutes(trips));
@@ -114,11 +112,11 @@ public class TravelService {
      * @param legArray a JsonArray of legs
      * @return List of legs
      */
-    public List<Leg> extractAllLegs(JsonArray legArray) throws WeatherException {
+    public List<Leg> extractAllLegs(JsonArray legArray) {
         List<Leg> legs = new ArrayList<>();
         for (int i = 0; i < legArray.size(); i++) {
             JsonObject legAsJsonObject = legArray.get(i).getAsJsonObject();
-            if(legAsJsonObject.has("direction")) {
+            if (legAsJsonObject.has("direction")) {
                 Leg leg = Leg.builder()
                         .direction(legAsJsonObject.get("direction").getAsString())
                         .origin(extractOriginStub(legAsJsonObject.get("stops").getAsJsonArray()))
@@ -138,7 +136,7 @@ public class TravelService {
      * @param stops a JsonArray of stops
      * @return originStub
      */
-    public OriginStub extractOriginStub(JsonArray stops) throws WeatherException {
+    public OriginStub extractOriginStub(JsonArray stops)  {
         JsonObject jsonObject = stops.get(0).getAsJsonObject();
         return OriginStub.builder()
                 .actualDepartureDateTime(setActualDepartureTime(jsonObject))
@@ -182,7 +180,7 @@ public class TravelService {
      * @param stops a JsonArray of stops
      * @return destinationStub  Details
      */
-    public DestinationStub extractDestinationStub(JsonArray stops) throws WeatherException {
+    public DestinationStub extractDestinationStub(JsonArray stops) {
         JsonObject jsonObject = stops.get(stops.size() - 1).getAsJsonObject();
         return DestinationStub.builder()
                 .actualArrivalDateTime(setActualArrivalTime(jsonObject))

@@ -4,18 +4,18 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
-import com.mobiquity.mobtravelapp.exception.WeatherException;
 import com.mobiquity.mobtravelapp.model.travel.Route;
 import com.mobiquity.mobtravelapp.model.travel.RouteModel;
 import com.mobiquity.mobtravelapp.model.travel.Station;
 import com.mobiquity.mobtravelapp.model.weather.Weather;
 import com.mobiquity.mobtravelapp.validation.TravelValidation;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,25 +28,22 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+//@SpringBootTest
+@ExtendWith(MockitoExtension.class)
+
 public class TravelServiceTest {
 
     @InjectMocks
-    private final TravelService travelService = new TravelService();
+    private TravelService travelService;
 
     @Mock
-    private final WeatherService weatherService = new WeatherService();
+    private WeatherService weatherService;
 
     @Mock
-    private final NsService nsService = new NsService();
+    private NsService nsService;
 
     RouteModel routeModel = new RouteModel("Amsterdam Zuid", "Duivendrecht", "2019-10-09T12:30:00");
 
-    @BeforeEach
-    public void init() throws WeatherException, IncorrectFormatException {
-        when(weatherService.getWeather(any(Station.class), any())).thenReturn(new Weather());
-        when(nsService.getNsTrips(any(RouteModel.class))).thenReturn(getJsonArrayFromTestResource());
-    }
 
     @Test
     public void checkIfInputIsCaseInsensitive() {
@@ -67,7 +64,9 @@ public class TravelServiceTest {
     }
 
     @Test
-    public void getRoutes() throws IncorrectFormatException, WeatherException {
+    public void getRoutes() {
+        when(weatherService.getWeather(any(Station.class), any())).thenReturn(new Weather());
+        when(nsService.getNsTrips(any(RouteModel.class))).thenReturn(getJsonArrayFromTestResource());
 
         assertNotNull(travelService.getTripFromNs(routeModel));
     }

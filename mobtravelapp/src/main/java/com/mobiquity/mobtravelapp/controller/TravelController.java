@@ -15,9 +15,9 @@ public class TravelController {
 
     @RequestMapping(value = "/travelInfo/routes", method = RequestMethod.GET)
     public Trip getRoutes(@RequestParam(value = "fromStation") String fromStation, @RequestParam(value = "toStation") String toStation,
-                          @RequestParam(value = "dateTime", defaultValue = "") String dateTime) throws IncorrectFormatException {
+                          @RequestParam(value = "dateTime", defaultValue = "") String dateTime) {
 
-        return travelService.getTripFromNs(new RouteModel(fromStation,toStation,dateTime));
+            return travelService.getTripFromNs(new RouteModel(fromStation, toStation, dateTime));
     }
 
     @RequestMapping("/")
