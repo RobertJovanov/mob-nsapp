@@ -4,14 +4,12 @@ metadata:
   name: mob-nsapp-service
   labels:
     app: mob-nsapp
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ .Values.certificateArn }}
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: mob-nsapp
   ports:
-    - name: https
+    - name: http
       protocol: TCP
-      port: 443
+      port: 80
       targetPort: 80
