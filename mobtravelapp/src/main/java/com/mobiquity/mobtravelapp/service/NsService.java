@@ -27,7 +27,8 @@ public class NsService {
 
     public String getNsTrips(RouteModel routeModelAfterReformat) throws IncorrectFormatException{
         String url = MessageFormat.format(uri, "fromStation=" + routeModelAfterReformat.getFromStation(),
-                "toStation=" + routeModelAfterReformat.getToStation(), "dateTime=" + routeModelAfterReformat.getDateTime());
+                "toStation=" + routeModelAfterReformat.getToStation(), "dateTime=" + routeModelAfterReformat.getDateTime(),
+                "searchForArrival=" + routeModelAfterReformat.getSearchForArrival());
 
 
         //RestTemplate restTemplate = new RestTemplate();

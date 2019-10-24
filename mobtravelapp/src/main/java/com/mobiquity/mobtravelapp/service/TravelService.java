@@ -40,7 +40,7 @@ public class TravelService {
             throw new IncorrectFormatException("Date Time should be formatted as: yyyy-mm-dd'T'HH:MM:ss");
         }
         return new RouteModel(TravelValidation.reformatStationName(routeModel.getFromStation()), TravelValidation.reformatStationName(routeModel.getToStation())
-                , routeModel.getDateTime());
+                , routeModel.getDateTime(), routeModel.getSearchForArrival());
     }
 
     /**
