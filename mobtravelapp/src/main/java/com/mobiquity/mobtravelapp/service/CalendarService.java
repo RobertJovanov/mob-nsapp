@@ -9,6 +9,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.DateTime;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
@@ -17,8 +18,12 @@ import com.google.api.services.calendar.model.Events;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -46,11 +51,10 @@ public class CalendarService {
 
             String pageToken = null;
             do {
-                Events events = service.events().list("primary").setPageToken(pageToken).execute();
+                Events events = service.events().list("primary")
+                        .setTimeMin(new DateTime(Date.from(Instant.now())))
+                        .setPageToken(pageToken).execute();
                 List<Event> items = events.getItems();
-                for (Event event : items) {
-                    System.out.println(event.getSummary());
-                }
                 pageToken = events.getNextPageToken();
                 eventsList = items;
             } while (pageToken != null);
@@ -60,6 +64,11 @@ public class CalendarService {
         }
 
         return eventsList;
+    }
+
+    private Date getCurrentDate() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.parse(sdf.format(new Date()));
     }
 
     /** Authorizes the installed application to access user's protected data. */
