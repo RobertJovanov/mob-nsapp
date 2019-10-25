@@ -11,10 +11,7 @@ public class RouteModel {
     private String searchForArrival;
 
     public RouteModel(String fromStation, String toStation, String dateTime){
-        this.fromStation = fromStation;
-        this.toStation = toStation;
-        this.dateTime = dateTime;
-        this.searchForArrival = "false";
+        this(fromStation, toStation, dateTime, "false");
     }
 
     public RouteModel(String fromStation, String toStation, String dateTime, String searchForArrival){

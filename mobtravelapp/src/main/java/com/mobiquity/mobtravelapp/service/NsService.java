@@ -30,8 +30,8 @@ public class NsService {
                 "toStation=" + routeModelAfterReformat.getToStation(), "dateTime=" + routeModelAfterReformat.getDateTime(),
                 "searchForArrival=" + routeModelAfterReformat.getSearchForArrival());
 
+        System.out.println("searchForArrival=" + routeModelAfterReformat.getSearchForArrival());
 
-        //RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Ocp-Apim-Subscription-Key", System.getenv(this.key));
 

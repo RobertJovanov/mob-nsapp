@@ -22,34 +22,44 @@ public class CommuteService {
     @Autowired
     CalendarService calendarService;
 
-    public List<Trip> getTripsForEvents(String home){
+    /**
+     * Gets the events from google calendar and creates the necessary trips for the day, using the specified home location
+     * as a starting point for the Trips and as a final destination for the trip after the last event.
+     * @param home a string representing the station a person uses for their commute
+     * @return a list of all the necessary trips for ones daily commute
+     */
+    public List<Trip> getCommute(String home){
         List<Trip> trips = new ArrayList<>();
 
         List<Event> events = calendarService.getEvents();
 
         try{
-            if(events.size() == 1){
-                Trip trip = travelService.getTripFromNs(
-                        new RouteModel(home, events.get(0).getLocation(), formatStartTime(events.get(0).getStart()), "true"));
-                trips.add(trip);
-            }else if(events.size() > 1){
-                Trip initialTrip = travelService.getTripFromNs(
-                        new RouteModel(home, events.get(0).getLocation(), formatStartTime(events.get(0).getStart()), "true"));
-                trips.add(initialTrip);
-                for(int i = 1; i < events.size(); i++){
-                    Trip trip = travelService.getTripFromNs(
-                            new RouteModel(events.get(i - 1).getLocation(), events.get(i).getLocation(),
-                                    formatStartTime(events.get(i).getStart()), "true"));
-                    trips.add(trip);
+            if(events.size() > 0){
+                trips.add(createInitialTrip(events, home));
+                if(events.size() > 1){
+                    for(int i = 1; i < events.size(); i++){
+                        Trip trip = travelService.getTripFromNs(
+                                new RouteModel(events.get(i - 1).getLocation(), events.get(i).getLocation(),
+                                        formatStartTime(events.get(i).getStart()), "true"));
+                        trips.add(trip);
+                    }
                 }
-                Trip returnTrip = travelService.getTripFromNs(
-                        new RouteModel(events.get(events.size() - 1).getLocation(), home, formatStartTime(events.get(events.size() - 1).getEnd())));
-                trips.add(returnTrip);
+                trips.add(createReturnTrip(events, home));
             }
         }catch (IncorrectFormatException e){
             e.printStackTrace();
         }
         return trips;
+    }
+
+    private Trip createInitialTrip(List<Event> events, String home) throws IncorrectFormatException{
+        return travelService.getTripFromNs(
+                new RouteModel(home, events.get(0).getLocation(), formatStartTime(events.get(0).getStart()), "true"));
+    }
+
+    private Trip createReturnTrip(List<Event> events, String home) throws IncorrectFormatException{
+        return travelService.getTripFromNs(
+                new RouteModel(events.get(events.size() - 1).getLocation(), home, formatStartTime(events.get(events.size() - 1).getEnd())));
     }
 
     private String formatStartTime(EventDateTime eventDateTime){
