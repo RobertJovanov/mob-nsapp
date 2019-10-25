@@ -18,13 +18,11 @@ import java.util.stream.IntStream;
 @Service
 public class TravelService {
 
-
     @Autowired
     private WeatherService weatherService;
 
     @Autowired
     private NsService nsService;
-
 
     /**
      * Reformat the values of a RouteModel to adhere to our format standard.
@@ -35,12 +33,12 @@ public class TravelService {
      * @return reformated routemodel
      * @throws IncorrectFormatException if the time is not in correct format
      */
-    public RouteModel reformatRoutes(RouteModel routeModel) throws IncorrectFormatException {
+    private RouteModel reformatRoutes(RouteModel routeModel) throws IncorrectFormatException {
         if (!TravelValidation.checkInputTime(routeModel.getDateTime())) {
             throw new IncorrectFormatException("Date Time should be formatted as: yyyy-mm-dd'T'HH:MM:ss");
         }
-        return new RouteModel(TravelValidation.reformatStationName(routeModel.getFromStation()), TravelValidation.reformatStationName(routeModel.getToStation())
-                , routeModel.getDateTime());
+        return new RouteModel(TravelValidation.reformatStationName(routeModel.getFromStation()), TravelValidation.reformatStationName(routeModel.getToStation()),
+                routeModel.getDateTime(), routeModel.getSearchForArrival());
     }
 
     /**

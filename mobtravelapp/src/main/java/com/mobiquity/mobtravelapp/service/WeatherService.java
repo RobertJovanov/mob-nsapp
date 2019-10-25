@@ -2,8 +2,8 @@ package com.mobiquity.mobtravelapp.service;
 
 
 import com.mobiquity.mobtravelapp.exception.WeatherException;
-import com.mobiquity.mobtravelapp.model.weather.Weather;
 import com.mobiquity.mobtravelapp.model.travel.Station;
+import com.mobiquity.mobtravelapp.model.weather.Weather;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
