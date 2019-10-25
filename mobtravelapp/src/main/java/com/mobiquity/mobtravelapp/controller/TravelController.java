@@ -45,8 +45,8 @@ public class TravelController {
     }
 
     @RequestMapping(value = "/events/commute")
-    public List<Trip> getTripsForEvents(){
-        return commuteService.getTripsForEvents();
+    public List<Trip> getTripsForEvents(@RequestParam(value = "home") String home){
+        return commuteService.getTripsForEvents(home);
     }
 
 }

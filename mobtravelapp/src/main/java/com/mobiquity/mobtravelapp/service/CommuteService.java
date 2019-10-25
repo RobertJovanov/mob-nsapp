@@ -22,19 +22,19 @@ public class CommuteService {
     @Autowired
     CalendarService calendarService;
 
-    public List<Trip> getTripsForEvents(){
+    public List<Trip> getTripsForEvents(String home){
         List<Trip> trips = new ArrayList<>();
 
         List<Event> events = calendarService.getEvents();
-        
+
         try{
             if(events.size() == 1){
                 Trip trip = travelService.getTripFromNs(
-                        new RouteModel("Haarlem", events.get(0).getLocation(), formatStartTime(events.get(0).getStart()), "true"));
+                        new RouteModel(home, events.get(0).getLocation(), formatStartTime(events.get(0).getStart()), "true"));
                 trips.add(trip);
             }else if(events.size() > 1){
                 Trip initialTrip = travelService.getTripFromNs(
-                        new RouteModel("Haarlem", events.get(0).getLocation(), formatStartTime(events.get(0).getStart()), "true"));
+                        new RouteModel(home, events.get(0).getLocation(), formatStartTime(events.get(0).getStart()), "true"));
                 trips.add(initialTrip);
                 for(int i = 1; i < events.size(); i++){
                     Trip trip = travelService.getTripFromNs(
@@ -42,6 +42,9 @@ public class CommuteService {
                                     formatStartTime(events.get(i).getStart()), "true"));
                     trips.add(trip);
                 }
+                Trip returnTrip = travelService.getTripFromNs(
+                        new RouteModel(events.get(events.size() - 1).getLocation(), home, formatStartTime(events.get(events.size() - 1).getEnd())));
+                trips.add(returnTrip);
             }
         }catch (IncorrectFormatException e){
             e.printStackTrace();
