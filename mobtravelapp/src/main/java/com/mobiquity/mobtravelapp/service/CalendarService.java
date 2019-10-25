@@ -18,8 +18,6 @@ import com.google.api.services.calendar.model.Events;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStreamReader;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,11 +62,6 @@ public class CalendarService {
         }
 
         return eventsList;
-    }
-
-    private Date getCurrentDate() throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return sdf.parse(sdf.format(new Date()));
     }
 
     /** Authorizes the installed application to access user's protected data. */

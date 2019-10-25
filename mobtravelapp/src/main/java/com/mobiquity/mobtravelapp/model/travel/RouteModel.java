@@ -2,7 +2,6 @@ package com.mobiquity.mobtravelapp.model.travel;
 
 import lombok.*;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class RouteModel {
@@ -16,5 +15,12 @@ public class RouteModel {
         this.toStation = toStation;
         this.dateTime = dateTime;
         this.searchForArrival = "false";
+    }
+
+    public RouteModel(String fromStation, String toStation, String dateTime, String searchForArrival){
+        this.fromStation = fromStation;
+        this.toStation = toStation;
+        this.dateTime = dateTime;
+        this.searchForArrival = searchForArrival;
     }
 }

@@ -1,12 +1,15 @@
 package com.mobiquity.mobtravelapp.service;
 
 import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventDateTime;
 import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
 import com.mobiquity.mobtravelapp.model.travel.RouteModel;
 import com.mobiquity.mobtravelapp.model.travel.Trip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,25 +26,32 @@ public class CommuteService {
         List<Trip> trips = new ArrayList<>();
 
         List<Event> events = calendarService.getEvents();
-        for(Event event : events){
-            try {
-                //String dateTime = formatStartTime(event.getStart()).toString();
-                //System.out.println(dateTime);
-                Trip trip = travelService.getTripFromNs(new RouteModel("Haarlem", event.getLocation(), "2019-10-23T17:00:00", "true"));
+        
+        try{
+            if(events.size() == 1){
+                Trip trip = travelService.getTripFromNs(
+                        new RouteModel("Haarlem", events.get(0).getLocation(), formatStartTime(events.get(0).getStart()), "true"));
                 trips.add(trip);
-            } catch (IncorrectFormatException e) {
-                e.printStackTrace();
+            }else if(events.size() > 1){
+                Trip initialTrip = travelService.getTripFromNs(
+                        new RouteModel("Haarlem", events.get(0).getLocation(), formatStartTime(events.get(0).getStart()), "true"));
+                trips.add(initialTrip);
+                for(int i = 1; i < events.size(); i++){
+                    Trip trip = travelService.getTripFromNs(
+                            new RouteModel(events.get(i - 1).getLocation(), events.get(i).getLocation(),
+                                    formatStartTime(events.get(i).getStart()), "true"));
+                    trips.add(trip);
+                }
             }
+        }catch (IncorrectFormatException e){
+            e.printStackTrace();
         }
-
         return trips;
     }
 
-    //TODO refactor to reformat EventDateTime to
-    /*
-    private Date formatStartTime(EventDateTime eventDateTime) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return sdf.parse(sdf.format(eventDateTime));
+    private String formatStartTime(EventDateTime eventDateTime){
+        long unixDateTime = eventDateTime.getDateTime().getValue();
+        Instant dateTime = Instant.ofEpochMilli(unixDateTime).atZone(ZoneId.of("Europe/Paris")).toInstant();
+        return dateTime.toString();
     }
-    */
 }
