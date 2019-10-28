@@ -1,0 +1,91 @@
+{
+  "stops":[
+    {
+      "notes":[
+        {
+          "value":"Station Accessible or Travel Assistance",
+          "key":"IS",
+          "type":"A",
+          "priority":0
+        },
+        {
+          "value":"Travel Assistance available at this station",
+          "key":"SS",
+          "type":"A",
+          "priority":0
+        }
+      ],
+      "routeIdx":2,
+      "plannedDepartureDateTime":"2019-10-09T09:03:00+0200",
+      "plannedDepartureTimeZoneOffset":120,
+      "plannedDepartureTrack":"2",
+      "plannedArrivalDateTime":"2019-10-09T09:01:00+0200",
+      "plannedArrivalTimeZoneOffset":120,
+      "plannedArrivalTrack":"2",
+      "cancelled":false,
+      "name":"Amsterdam Zuid",
+      "lng":4.873061,
+      "lat":52.339027,
+      "countryCode":"NL",
+      "uicCode":"8400061"
+    },
+    {
+      "notes":[
+        {
+          "value":"Station Accessible or Travel Assistance",
+          "key":"IS",
+          "type":"A",
+          "priority":0
+        },
+        {
+          "value":"Travel Assistance available at this station",
+          "key":"SS",
+          "type":"A",
+          "priority":0
+        }
+      ],
+      "routeIdx":3,
+      "plannedDepartureDateTime":"2019-10-09T09:05:00+0200",
+      "plannedDepartureTimeZoneOffset":120,
+      "plannedDepartureTrack":"2",
+      "plannedArrivalDateTime":"2019-10-09T09:05:00+0200",
+      "plannedArrivalTimeZoneOffset":120,
+      "plannedArrivalTrack":"2",
+      "cancelled":false,
+      "name":"Amsterdam RAI",
+      "lng":4.889512,
+      "lat":52.337301,
+      "countryCode":"NL",
+      "uicCode":"8400056"
+    },
+    {
+      "notes":[
+        {
+          "value":"Station Accessible or Travel Assistance",
+          "key":"IS",
+          "type":"A",
+          "priority":0
+        },
+        {
+          "value":"Travel Assistance available at this station",
+          "key":"SS",
+          "type":"A",
+          "priority":0
+        }
+      ],
+      "routeIdx":4,
+      "plannedDepartureDateTime":"2019-10-09T09:11:00+0200",
+      "plannedDepartureTimeZoneOffset":120,
+      "plannedDepartureTrack":"1",
+      "plannedArrivalDateTime":"2019-10-09T09:09:00+0200",
+      "plannedArrivalTimeZoneOffset":120,
+      "plannedArrivalTrack":"1",
+      "cancelled":false,
+      "name":"Duivendrecht",
+      "lng":4.936606,
+      "lat":52.323557,
+      "countryCode":"NL",
+      "uicCode":"8400194"
+    }
+  ]
+}
