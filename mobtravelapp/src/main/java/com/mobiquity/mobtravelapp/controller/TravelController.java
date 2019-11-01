@@ -19,13 +19,13 @@ import java.util.List;
 public class TravelController {
 
     @Autowired
-    TravelService travelService;
+    private TravelService travelService;
 
     @Autowired
-    CalendarService calendarService;
+    private CalendarService calendarService;
 
     @Autowired
-    CommuteService commuteService;
+    private CommuteService commuteService;
 
     @RequestMapping(value = "/travelInfo/routes", method = RequestMethod.GET)
     public Trip getRoutes(@RequestParam(value = "fromStation") String fromStation, @RequestParam(value = "toStation") String toStation,
