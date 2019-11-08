@@ -1,6 +1,5 @@
 package com.mobiquity.mobtravelapp.controller;
 
-import com.google.api.services.calendar.model.Event;
 import com.mobiquity.mobtravelapp.exception.IncorrectFormatException;
 import com.mobiquity.mobtravelapp.model.travel.RouteModel;
 import com.mobiquity.mobtravelapp.model.travel.Trip;
@@ -39,11 +38,6 @@ public class TravelController {
     @RequestMapping("/")
     public String checkHealth(){
         return "Application is healthy.\n";
-    }
-
-    @RequestMapping(value = "/events", method = RequestMethod.GET)
-    public List<Event> getEventList(){
-        return calendarService.getEvents();
     }
 
     @RequestMapping(value = "/events/commute")

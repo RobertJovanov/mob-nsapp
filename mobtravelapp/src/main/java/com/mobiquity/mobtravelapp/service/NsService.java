@@ -39,7 +39,6 @@ public class NsService {
             result = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         } catch (RestClientException e) {
             throw new IncorrectFormatException("Bad Request");
-
         }
         return result.getBody();
     }

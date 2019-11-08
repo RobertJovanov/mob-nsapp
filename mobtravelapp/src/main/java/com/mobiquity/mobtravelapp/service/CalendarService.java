@@ -15,8 +15,10 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
+import com.mobiquity.mobtravelapp.exception.MissingCredentialsException;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Null;
 import java.io.InputStreamReader;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -37,14 +39,14 @@ public class CalendarService {
 
     private static FileDataStoreFactory dataStoreFactory;
 
-    public List<Event> getEvents(){
+    public List<Event> getEvents(Credential credential){
 
         List<Event> eventsList = new ArrayList<>();
         try {
             httpTransport = GoogleNetHttpTransport.newTrustedTransport();
             dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
 
-            Calendar service = new Calendar.Builder(httpTransport, JSON_FACTORY, authorize())
+            Calendar service = new Calendar.Builder(httpTransport, JSON_FACTORY, credential)
                     .setApplicationName("MobCalendarApp").build();
 
             String pageToken = null;
@@ -63,26 +65,4 @@ public class CalendarService {
 
         return eventsList;
     }
-
-    /** Authorizes the installed application to access user's protected data. */
-    private static Credential authorize() throws Exception {
-        // load client secrets
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY,
-                new InputStreamReader(CalendarService.class.getResourceAsStream("/credentials.json")));
-        if (clientSecrets.getDetails().getClientId().startsWith("Enter")
-                || clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
-            System.out.println(
-                    "Enter Client ID and Secret from https://code.google.com/apis/console/?api=calendar "
-                            + "into calendar-cmdline-sample/src/main/resources/client_secrets.json");
-            System.exit(1);
-        }
-        // set up authorization code flow
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                httpTransport, JSON_FACTORY, clientSecrets,
-                Collections.singleton(CalendarScopes.CALENDAR)).setDataStoreFactory(dataStoreFactory)
-                .build();
-        // authorize
-        return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
-    }
-
 }

@@ -8,6 +8,7 @@ import com.mobiquity.mobtravelapp.model.travel.Trip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -17,10 +18,13 @@ import java.util.List;
 public class CommuteService {
 
     @Autowired
-    TravelService travelService;
+    private TravelService travelService;
 
     @Autowired
-    CalendarService calendarService;
+    private CalendarService calendarService;
+
+    @Autowired
+    private AuthorizationService authorizationService;
 
     /**
      * Gets the events from google calendar and creates the necessary trips for the day, using the specified home location
@@ -30,8 +34,13 @@ public class CommuteService {
      */
     public List<Trip> getCommute(String home){
         List<Trip> trips = new ArrayList<>();
+        List<Event> events = new ArrayList<>();
 
-        List<Event> events = calendarService.getEvents();
+        try{
+            events = calendarService.getEvents(authorizationService.authorize());
+        }catch(IOException e){
+            //TODO LOG AuthorazationService exception
+        }
 
         try{
             if(events.size() > 0){
@@ -47,6 +56,7 @@ public class CommuteService {
                 trips.add(createReturnTrip(events, home));
             }
         }catch (IncorrectFormatException e){
+            //TODO LOG
             e.printStackTrace();
         }
         return trips;
